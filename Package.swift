@@ -24,11 +24,18 @@ private let products: [PackageDescription.Product] = [
     )
 ]
 
+private let dependencies: [PackageDescription.Package.Dependency] = [
+    .package(url: "https://github.com/orchetect/OTCore", branch: "main"),
+]
+
 private let targets: [PackageDescription.Target] = [
     // Swift
     .target(
         name: name,
-        dependencies: [.target(name: nameC)]
+        dependencies: [
+            .target(name: nameC),
+            .byNameItem(name: "OTCore", condition: nil)
+        ]
     ),
     
     // C
@@ -61,6 +68,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: platforms,
     products: products,
+    dependencies: dependencies,
     targets: targets,
     cxxLanguageStandard: .cxx20
 )

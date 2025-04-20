@@ -1,3 +1,5 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
+
 import Foundation
 
 // MARK: - Date string formatting
@@ -45,7 +47,7 @@ extension Date {
     public var formattedString3: String {
         generalDateFormatter3.string(from: self)
     }
-    
+
     public var simpleString: String {
         simpleDateFormatter.string(from: self)
     }

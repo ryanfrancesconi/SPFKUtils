@@ -1,6 +1,7 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
 
-import Foundation
 import Darwin
+import Foundation
 
 /// Duration in real-time seconds of 1 tick in mach (host) time domain.
 public let machTimeSecondsPerTick: Double = {

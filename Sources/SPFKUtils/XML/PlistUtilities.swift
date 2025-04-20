@@ -1,3 +1,5 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
+
 import AEXML
 import Foundation
 import OTCore
@@ -23,6 +25,7 @@ public enum PlistUtilities {
 
         // hack for a zero length data error that the PropertyListSerialization throws
         var string = element.xmlCompact.replacingOccurrences(of: "<data />", with: "<data></data>")
+
         // remove line breaks if escaped and present
         string = string.replacingOccurrences(of: "&#10;", with: "")
         string = string.replacingOccurrences(of: "\t", with: "")

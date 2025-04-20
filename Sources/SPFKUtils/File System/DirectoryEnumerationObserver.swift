@@ -1,3 +1,5 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
+
 import Foundation
 
 /// Observe this directory url and all its subdirectory children by sending a common event.

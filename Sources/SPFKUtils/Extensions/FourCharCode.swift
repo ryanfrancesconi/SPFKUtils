@@ -1,3 +1,4 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
 
 import Foundation
 
@@ -50,7 +51,7 @@ extension OSStatus {
     /// Create a String representation of a FourCC.
     public func fourCharCodeToString() -> String? {
         guard self >= 0 else { return nil }
-        
+
         return FourCharCode(self).fourCharCodeToString()
     }
 }

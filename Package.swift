@@ -25,7 +25,7 @@ private let products: [PackageDescription.Product] = [
 ]
 
 private let dependencies: [PackageDescription.Package.Dependency] = [
-    .package(name: "SPFKTesting", path: "../SPFKTesting"),
+    .package(path: "../SPFKTesting"),
     // .package(url: "https://github.com/ryanfrancesconi/SPFKTesting", branch: "main"),
     
     .package(url: "https://github.com/orchetect/OTCore", branch: "main"),
@@ -40,7 +40,6 @@ private let targets: [PackageDescription.Target] = [
         name: name,
         dependencies: [
             .target(name: nameC),
-            .byNameItem(name: "SPFKTesting", condition: nil),
 
             .byNameItem(name: "OTCore", condition: nil),
             .byNameItem(name: "OTAtomics", condition: nil),
@@ -66,6 +65,7 @@ private let targets: [PackageDescription.Target] = [
         dependencies: [
             .byNameItem(name: name, condition: nil),
             .byNameItem(name: nameC, condition: nil),
+            .byNameItem(name: "SPFKTesting", condition: nil)
         ],
         resources: [
             .process("Resources")

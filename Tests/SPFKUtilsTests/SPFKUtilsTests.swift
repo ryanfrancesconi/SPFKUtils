@@ -1,5 +1,4 @@
-import Testing
+import SPFKTesting
 @testable import SPFKUtils
+import Testing
 
-@Test func example() async throws {
-}

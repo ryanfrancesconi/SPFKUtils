@@ -2,7 +2,6 @@
 
 import AEXML
 import Foundation
-import OTCore
 
 public enum PlistUtilities {
     public static func dictionaryToPlist(dictionary: KeyValueDictionary) throws -> AEXMLDocument {

@@ -3,8 +3,6 @@
 import Foundation
 import UniformTypeIdentifiers
 
-public typealias URLPair = (url1: URL, url2: URL)
-
 fileprivate let allocatedSizeResourceKeys: Set<URLResourceKey> = [
     .isRegularFileKey,
     .fileAllocatedSizeKey,

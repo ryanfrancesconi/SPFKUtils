@@ -2,7 +2,7 @@
 
 import Foundation
 
-public protocol TestCaseModel: AnyObject {
+public protocol TestCaseModel: TypeDescribable {
     var bin: URL { get }
     var deleteBinOnExit: Bool { get set }
 }
@@ -12,7 +12,8 @@ extension TestCaseModel {
         FileManager.default.temporaryDirectory
     }
 
-    public func createBin(suite: String, in baseURL: URL? = nil) -> URL {
+    public func createBin(suite: String? = nil, in baseURL: URL? = nil) -> URL {
+        let suite = suite ?? typeName
         var url = baseURL ?? defaultURL
 
         url = url.appendingPathComponent(suite)
@@ -49,7 +50,7 @@ extension TestCaseModel {
         let bin = createBin(suite: suite)
         let tmpfile = try copy(to: bin, url: source)
 
-        guard FileManager.default.fileExists(atPath: tmpfile.path) else { return nil }
+        guard tmpfile.exists else { return nil }
 
         return tmpfile
     }

@@ -3,6 +3,7 @@
 import Foundation
 import QuartzCore
 
+/// Simple timing utility
 public class Benchmark {
     public private(set) var startScanTime: CFTimeInterval = 0
     public private(set) var endScanTime: CFTimeInterval = 0

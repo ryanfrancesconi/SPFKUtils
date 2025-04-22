@@ -4,9 +4,8 @@ import Foundation
 import OTCore
 
 extension Sequence where Element: Hashable {
-    // TODO: 'frequency' is an ambiguous term since it sounds more related to audio.
     /// Key: The element. Value: how many times it occurs.
-    public var frequency: [Element: Int] {
+    public var elementQuantity: [Element: Int] {
         reduce(into: [:]) {
             $0[$1, default: 0] += 1
         }

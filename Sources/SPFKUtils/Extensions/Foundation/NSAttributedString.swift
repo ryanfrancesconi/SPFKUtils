@@ -8,8 +8,10 @@ extension NSAttributedString {
             return nil
         }
 
-        try? self.init(data: data,
-                       options: [.documentType: NSAttributedString.DocumentType.html],
-                       documentAttributes: nil)
+        try? self.init(
+            data: data,
+            options: [.documentType: NSAttributedString.DocumentType.html],
+            documentAttributes: nil
+        )
     }
 }

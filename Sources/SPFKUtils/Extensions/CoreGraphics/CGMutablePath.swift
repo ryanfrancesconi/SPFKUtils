@@ -7,15 +7,18 @@ extension CGMutablePath {
     public static func createRoundRect(in rect: CGRect, cornerRadius: CGFloat) -> CGMutablePath {
         let path = CGMutablePath()
 
-        if rect.size.width > (cornerRadius * 2) && rect.size.height > (cornerRadius * 2) {
-            path.addRoundedRect(in: rect,
-                                cornerWidth: cornerRadius,
-                                cornerHeight: cornerRadius)
-        } else {
+        guard rect.size.width > (cornerRadius * 2) && rect.size.height > (cornerRadius * 2) else {
             Log.error("Invalid size passed in", rect, "cornerRadius", cornerRadius)
 
             path.addRect(rect)
+            return path
         }
+
+        path.addRoundedRect(
+            in: rect,
+            cornerWidth: cornerRadius,
+            cornerHeight: cornerRadius
+        )
 
         return path
     }

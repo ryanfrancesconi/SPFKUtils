@@ -2,7 +2,7 @@
 
 import Foundation
 
-// MARK: - Date string formatting
+// MARK: - Common Date string formatting
 
 fileprivate let generalDateFormatter: DateFormatter = {
     let dateFormatter = DateFormatter()

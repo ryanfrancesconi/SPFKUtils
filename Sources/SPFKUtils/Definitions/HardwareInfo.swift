@@ -3,6 +3,7 @@
 import Darwin
 import Foundation
 
+/// Only accounting for macOS
 public enum HardwareInfo {
     public enum ChipType: String {
         case x86_64
@@ -34,6 +35,7 @@ public enum HardwareInfo {
 
     private static func sysctl(name: String) -> String {
         var size = 0
+
         sysctlbyname(name, nil, &size, nil, 0)
 
         var machine = [CChar](repeating: 0, count: size)
@@ -56,8 +58,6 @@ public enum HardwareInfo {
     }()
 
     public static let cores: Int = {
-        // sysctl(name: "hw.perflevel0.physicalcpu")
-
         ProcessInfo.processInfo.activeProcessorCount
     }()
 
@@ -74,27 +74,4 @@ public enum HardwareInfo {
 
         return info
     }()
-
-    private static let HOST_BASIC_INFO_COUNT: mach_msg_type_number_t =
-        UInt32(MemoryLayout<host_basic_info_data_t>.size / MemoryLayout<integer_t>.size)
-
-    fileprivate static func hostBasicInfo() -> host_basic_info {
-        var size = HOST_BASIC_INFO_COUNT
-        let hostInfo = host_basic_info_t.allocate(capacity: 1)
-
-        let result = hostInfo.withMemoryRebound(to: integer_t.self, capacity: Int(size)) {
-            host_info(mach_host_self(), HOST_BASIC_INFO, $0, &size)
-        }
-
-        let data = hostInfo.move()
-        hostInfo.deallocate()
-
-        if Log.buildConfig == .debug {
-            if result != KERN_SUCCESS {
-                Log.error("ERROR - \(#file):\(#function) - kern_result_t = " + "\(result)")
-            }
-        }
-
-        return data
-    }
 }

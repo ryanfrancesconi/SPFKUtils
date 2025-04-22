@@ -9,15 +9,17 @@ extension CGRect {
             // already a square
             return self
         }
-        
+
         if width > height {
-            return CGRect(origin: .init(x: origin.x + ((width - height) / 2),
-                                        y: origin.y),
-                          size: .init(width: height, height: height))
+            return CGRect(
+                origin: .init(x: origin.x + ((width - height) / 2), y: origin.y),
+                size: .init(width: height, height: height)
+            )
         } else {
-            return CGRect(origin: .init(x: origin.x,
-                                        y: origin.y + ((height - width) / 2)),
-                          size: .init(width: width, height: width))
+            return CGRect(
+                origin: .init(x: origin.x, y: origin.y + ((height - width) / 2)),
+                size: .init(width: width, height: width)
+            )
         }
     }
 }

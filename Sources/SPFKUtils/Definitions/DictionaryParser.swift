@@ -126,8 +126,7 @@ public struct DictionaryParser {
 
 extension DictionaryParser: CustomStringConvertible {
     public var description: String {
-        let string = jsonValue?.toString(using: .utf8) ?? "nil"
-        return "\n📗\n\(string)\n📙\n"
+        jsonValue?.toString(using: .utf8) ?? "nil"
     }
 
     public func print() {

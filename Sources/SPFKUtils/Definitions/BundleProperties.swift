@@ -79,26 +79,31 @@ public struct BundleProperties {
 
 extension BundleProperties {
     /// Return this applications Caches directory based on the main bundle ID such as
-    /// /Users/YOU/Library/Caches/com.audiodesigndesk.ADD
+    /// /Users/[USERNAME]/Library/Caches/[BUNDLE ID]
     public static var cachesDirectory: URL? {
-        guard let caches = FileManager.default.urls(
-            for: .cachesDirectory,
-            in: .userDomainMask)
-            .first,
-            let id = Bundle.main.bundleIdentifier else {
+        guard let id = Bundle.main.bundleIdentifier,
+              let cachesDirectory = FileManager.default.urls(
+                  for: .cachesDirectory,
+                  in: .userDomainMask
+              ).first else {
             return nil
         }
-        return caches.appendingPathComponent(id)
+
+        return cachesDirectory.appendingPathComponent(id)
     }
 
     public static var documentsDirectory: URL? {
-        FileManager.default.urls(for: .documentDirectory,
-                                 in: .userDomainMask).first
+        FileManager.default.urls(
+            for: .documentDirectory,
+            in: .userDomainMask
+        ).first
     }
 
     public static var applicationSupportDirectory: URL? {
-        FileManager.default.urls(for: .applicationSupportDirectory,
-                                 in: .userDomainMask).first
+        FileManager.default.urls(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask
+        ).first
     }
 
     public static let appFolder: URL = Bundle.main.bundleURL.deletingLastPathComponent()

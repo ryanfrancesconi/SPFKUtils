@@ -32,6 +32,7 @@ private let dependencies: [PackageDescription.Package.Dependency] = [
     .package(url: "https://github.com/orchetect/OTAtomics", branch: "main"),
     .package(url: "https://github.com/tadija/AEXML", from: "4.6.0"),
     .package(url: "https://github.com/rnine/Checksum", branch: "master"),
+    .package(url: "https://github.com/apple/swift-numerics", from: "1.0.0"),
     
 ]
 
@@ -45,7 +46,9 @@ private let targets: [PackageDescription.Target] = [
             .byNameItem(name: "OTCore", condition: nil),
             .byNameItem(name: "OTAtomics", condition: nil),
             .byNameItem(name: "AEXML", condition: nil),
-            .byNameItem(name: "Checksum", condition: nil)
+            .byNameItem(name: "Checksum", condition: nil),
+            .product(name: "Numerics", package: "swift-numerics")
+
         ]
     ),
     

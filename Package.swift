@@ -25,7 +25,15 @@ private let products: [PackageDescription.Product] = [
 ]
 
 private let dependencies: [PackageDescription.Package.Dependency] = [
+    .package(path: "../SPFKTesting"),
+    // .package(url: "https://github.com/ryanfrancesconi/SPFKTesting", branch: "main"),
+    
     .package(url: "https://github.com/orchetect/OTCore", branch: "main"),
+    .package(url: "https://github.com/orchetect/OTAtomics", branch: "main"),
+    .package(url: "https://github.com/tadija/AEXML", from: "4.6.0"),
+    .package(url: "https://github.com/rnine/Checksum", branch: "master"),
+    .package(url: "https://github.com/apple/swift-numerics", from: "1.0.0"),
+    
 ]
 
 private let targets: [PackageDescription.Target] = [
@@ -34,7 +42,13 @@ private let targets: [PackageDescription.Target] = [
         name: name,
         dependencies: [
             .target(name: nameC),
-            .byNameItem(name: "OTCore", condition: nil)
+
+            .byNameItem(name: "OTCore", condition: nil),
+            .byNameItem(name: "OTAtomics", condition: nil),
+            .byNameItem(name: "AEXML", condition: nil),
+            .byNameItem(name: "Checksum", condition: nil),
+            .product(name: "Numerics", package: "swift-numerics")
+
         ]
     ),
     
@@ -56,6 +70,7 @@ private let targets: [PackageDescription.Target] = [
         dependencies: [
             .byNameItem(name: name, condition: nil),
             .byNameItem(name: nameC, condition: nil),
+            .byNameItem(name: "SPFKTesting", condition: nil)
         ],
         resources: [
             .process("Resources")

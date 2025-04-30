@@ -43,6 +43,10 @@ extension String {
 
         return output.uppercased()
     }
+
+    public var fourCharCode: FourCharCode? {
+        try? FourCharCode.from(string: self)
+    }
 }
 
 // MARK: - Comparison
@@ -104,7 +108,7 @@ extension String {
     public var urlEncoded: String? {
         addingPercentEncoding(withAllowedCharacters: .urlAllowed)
     }
-    
+
     public var urlQueryEncoded: String? {
         urlEncoded?.replacingOccurrences(of: "%20", with: "+")
     }

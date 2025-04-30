@@ -2,7 +2,8 @@
 
 import Foundation
 
-extension FourCharCode /* aka UInt32, defined in Kernel */ {
+/* aka UInt32, defined in Kernel */
+extension FourCharCode {
     /// Create a String representation of a FourCC.
     public func fourCharCodeToString() -> String? {
         let v1 = (self >> 24) & 0xFF
@@ -44,6 +45,25 @@ extension FourCharCode /* aka UInt32, defined in Kernel */ {
         return string
 
         // NSHFSTypeCodeFromFileType
+    }
+
+    /// Helper function to convert codes for Audio Units
+    /// - parameter string: Four character string to convert
+    public static func from(string: String) throws -> FourCharCode {
+        let utf8 = string.utf8
+
+        guard utf8.count == 4 else {
+            throw NSError(description: "\(string) must be a 4 character string")
+        }
+
+        var out: FourCharCode = 0
+
+        for char in utf8 {
+            out <<= 8
+            out |= FourCharCode(char)
+        }
+
+        return out
     }
 }
 

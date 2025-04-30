@@ -13,19 +13,21 @@ final class NumberTests: BinTestCase {
     }
 
     @Test func fourCharCode() throws {
-        var v1: FourCharCode = 1635083896
-        var s1 = v1.fourCharCodeToString()
+        let v1: FourCharCode = 1635083896
+        let s1 = try #require(v1.fourCharCodeToString())
+
         #expect(s1 == "aufx")
         #expect(s1 == v1.fromHFSTypeCode())
+        #expect(v1 == s1.fourCharCode)
 
-        v1 = 1298229066
-        s1 = v1.fourCharCodeToString()
-        #expect(s1 == "MagJ")
-        #expect(s1 == v1.fromHFSTypeCode())
+        let v2: FourCharCode = 1298229066
+        let s2 = v2.fourCharCodeToString()
+        #expect(s2 == "MagJ")
+        #expect(s2 == v2.fromHFSTypeCode())
 
         // test invalid value
-        let v2: FourCharCode = 130071762
-        let s2 = v2.fourCharCodeToString()
-        #expect(s2 == nil)
+        let v3: FourCharCode = 130071762
+        let s3 = v3.fourCharCodeToString()
+        #expect(s3 == nil)
     }
 }

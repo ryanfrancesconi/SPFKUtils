@@ -8,7 +8,7 @@ public struct Log {
     /// Global build config variable.
     /// Set once immediately on app launch. Then app and all packages can read it.
     public static var buildConfig: BuildConfig = .debug
-    
+
     static let defaultSubsystem: String = {
         Bundle.main.bundleIdentifier ?? "com.spongefork"
     }()

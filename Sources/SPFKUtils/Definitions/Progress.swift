@@ -9,9 +9,14 @@ public typealias ProgressValue1 = Double
 public typealias ProgressValue100 = Double
 
 public typealias AsyncProgressEvent = (string: String?, progress: ProgressValue100)
+public typealias AsyncProgress1Event = (string: String?, progress: ProgressValue1)
 
 public protocol AsyncProgressDelegate {
     func asyncProgress(event: AsyncProgressEvent) async
+}
+
+public protocol AsyncProgress1Delegate {
+    func asyncProgress(event: AsyncProgress1Event) async
 }
 
 //

@@ -1,0 +1,53 @@
+import AppKit
+
+extension NSFont {
+    /// Utility to create a font from a URL such as inside a package
+    /// See: ADDUI.RulerLayer for a usage
+    ///
+    /// - Parameters:
+    ///   - url: `URL` to the font
+    ///   - ofSize: the size to create it at
+    /// - Returns: `NSFont` or nil
+    public static func create(from url: URL, ofSize: CGFloat) -> NSFont? {
+        guard let data = NSData(contentsOf: url),
+              let provider = CGDataProvider(data: data),
+              let ref = CGFont(provider) else {
+            Log.error("Couldn't create font")
+            return nil
+        }
+
+        return CTFontCreateWithGraphicsFont(ref, ofSize, nil, nil)
+    }
+
+    public static let miniSystemFont = NSFont.systemFont(
+        ofSize: NSFont.systemFontSize(for: .mini)
+    )
+
+    public static let miniBoldSystemFont = NSFont.boldSystemFont(
+        ofSize: NSFont.systemFontSize(for: .mini)
+    )
+
+    public static let smallSystemFont = NSFont.systemFont(
+        ofSize: NSFont.systemFontSize(for: .small)
+    )
+
+    public static let regularSystemFont = NSFont.systemFont(
+        ofSize: NSFont.systemFontSize(for: .regular)
+    )
+
+    public static let regularBoldSystemFont = NSFont.boldSystemFont(
+        ofSize: NSFont.systemFontSize(for: .regular)
+    )
+
+    public static let regularBoldMonoSpacedFont: NSFont? = NSFont(name: "Monaco", size: NSFont.systemFontSize(for: .regular))
+
+    public static let smallBoldSystemFont = NSFont.boldSystemFont(
+        ofSize: NSFont.systemFontSize(for: .small)
+    )
+
+    public static let largeSystemFont = NSFont.systemFont(
+        ofSize: NSFont.systemFontSize(for: .large)
+    )
+
+    public static let headerSystemFont = NSFont.systemFont(ofSize: 14)
+}

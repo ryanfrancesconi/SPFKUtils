@@ -281,7 +281,7 @@ extension NSImage {
 extension CGImage {
     public static func contentsOf(
         url: URL,
-        priority: Task.Priority = .medium
+        priority: TaskPriority = .medium
     ) async throws -> CGImage? {
         let task = Task<CGImage?, Error>(priority: priority) {
             NSImage(contentsOf: url)?.cgImage
@@ -307,6 +307,9 @@ extension NSImage {
 extension CGImage {
     @inline(__always) @_disfavoredOverload
     public var nsImage: NSImage? {
-        NSImage(cgImage: self, size: .zero)
+        NSImage(
+            cgImage: self,
+            size: CGSize(width: self.width, height: self.height)
+        )
     }
 }

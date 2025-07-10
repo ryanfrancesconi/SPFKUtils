@@ -14,6 +14,6 @@ class BundleResourcesTests: BinTestCase {
     @Test func testBundle() async throws {
         let bundle = BundleResources.shared
 
-        Swift.print(bundle.bundleURL)
+        Log.debug(bundle.bundleURL)
     }
 }

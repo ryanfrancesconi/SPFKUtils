@@ -2,7 +2,6 @@ import AppKit
 
 extension NSFont {
     /// Utility to create a font from a URL such as inside a package
-    /// See: ADDUI.RulerLayer for a usage
     ///
     /// - Parameters:
     ///   - url: `URL` to the font

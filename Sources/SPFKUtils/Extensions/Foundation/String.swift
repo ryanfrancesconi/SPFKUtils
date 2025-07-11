@@ -47,6 +47,18 @@ extension String {
     public var fourCharCode: FourCharCode? {
         try? FourCharCode.from(string: self)
     }
+
+    public var titleCased: String {
+        return self
+            .replacingOccurrences(
+                of: "([A-Z])",
+                with: " $1",
+                options: .regularExpression,
+                range: range(of: self)
+            )
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .capitalized // If input is in llamaCase
+    }
 }
 
 // MARK: - Comparison

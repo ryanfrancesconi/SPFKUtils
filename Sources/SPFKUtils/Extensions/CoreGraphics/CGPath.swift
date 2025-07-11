@@ -53,12 +53,18 @@ extension CGPath {
             throw NSError(description: "Failed to create NSGraphicsContext from bitmap")
         }
 
+        NSGraphicsContext.saveGraphicsState()
+
+        defer {
+            NSGraphicsContext.restoreGraphicsState()
+        }
+
+        NSGraphicsContext.current = context
+
         context.shouldAntialias = true
         context.imageInterpolation = .low
 
-        NSGraphicsContext.saveGraphicsState()
-        NSGraphicsContext.current = context
-
+        context.cgContext.setAllowsAntialiasing(true)
         context.cgContext.setFillColor(fillColor.cgColor)
         context.cgContext.addPath(self)
         context.cgContext.fillPath()
@@ -70,8 +76,6 @@ extension CGPath {
         }
 
         context.flushGraphics()
-
-        NSGraphicsContext.restoreGraphicsState()
 
         guard let image = bitmap.cgImage else {
             throw NSError(description: "Failed to convert bitmap to CGImage")

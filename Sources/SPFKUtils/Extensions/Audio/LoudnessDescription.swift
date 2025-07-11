@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct LoudnessDescription: Hashable, Comparable, Codable {
+public struct LoudnessDescription: Comparable, Hashable, Codable {
     public static func < (lhs: LoudnessDescription, rhs: LoudnessDescription) -> Bool {
         guard let lhs = lhs.lufs,
               let rhs = rhs.lufs else { return false }

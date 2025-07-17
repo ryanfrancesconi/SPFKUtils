@@ -38,7 +38,15 @@ extension NSFont {
         ofSize: NSFont.systemFontSize(for: .regular)
     )
 
-    public static let regularBoldMonoSpacedFont: NSFont? = NSFont(name: "Monaco", size: NSFont.systemFontSize(for: .regular))
+    public static let regularMonoSpacedFont: NSFont? = NSFont(
+        name: "Monaco",
+        size: NSFont.systemFontSize(for: .regular)
+    )
+
+    public static let smallMonoSpacedFont: NSFont? = NSFont(
+        name: "Monaco",
+        size: NSFont.systemFontSize(for: .small)
+    )
 
     public static let smallBoldSystemFont = NSFont.boldSystemFont(
         ofSize: NSFont.systemFontSize(for: .small)

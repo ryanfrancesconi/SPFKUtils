@@ -34,3 +34,11 @@ extension UInt64 {
         Double(self) / machTimeTicksPerSecond
     }
 }
+
+@available(macOS 13, *)
+extension Duration {
+    public var timeInterval: TimeInterval {
+        components.seconds.double +
+            (components.attoseconds.double / 1e18)
+    }
+}

@@ -265,7 +265,7 @@ extension URL {
                           bookmarkDataIsStale: &stale)
 
         } catch {
-            // Log.error(error)
+            Log.error(error)
             return nil
         }
     }
@@ -289,7 +289,9 @@ extension URL {
 
 extension URL {
     public var isEmpty: Bool {
-        (try? FileManager.default.contentsOfDirectory(at: self, includingPropertiesForKeys: []).isEmpty) == true
+        guard isDirectoryOrPackage else { return false }
+
+        return directoryContents?.isEmpty == true
     }
 
     /// FileManager convenience: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]
@@ -297,7 +299,6 @@ extension URL {
     /// - Returns: a shallow (non-recursive) URL array of visible files or nil if unable
     /// to read the directory
     public var directoryContents: [URL]? {
-        // renamed listDirectory()
         try? listDirectory()
     }
 

@@ -55,6 +55,10 @@ extension NSFont {
     public static let largeSystemFont = NSFont.systemFont(
         ofSize: NSFont.systemFontSize(for: .large)
     )
+    
+    public static let largeBoldSystemFont = NSFont.boldSystemFont(
+        ofSize: NSFont.systemFontSize(for: .large)
+    )
 
     public static let headerSystemFont = NSFont.systemFont(ofSize: 14)
 }

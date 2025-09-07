@@ -243,6 +243,37 @@ extension NSImage {
         return rotatedImage
     }
 
+    public func scaled(by value: CGFloat) -> NSImage? {
+        // Calculate the new size based on the percentage
+        let newWidth = self.size.width * value
+        let newHeight = self.size.height * value
+        let newSize = NSSize(width: newWidth, height: newHeight)
+
+        // Create a new NSImage with the calculated size
+        let scaledImage = NSImage(size: newSize)
+
+        // Lock focus to the new image to draw into it
+        scaledImage.lockFocus()
+
+        // Set image interpolation for better quality scaling
+        NSGraphicsContext.current?.imageInterpolation = .high
+
+        // Draw the original image into the new image's context
+        self.draw(
+            in: NSRect(origin: .zero, size: newSize),
+            from: NSRect(origin: .zero, size: self.size),
+            operation: .copy,
+            fraction: 1.0
+        )
+
+        // Unlock focus
+        scaledImage.unlockFocus()
+
+        NSGraphicsContext.current?.imageInterpolation = .default
+        
+        return scaledImage
+    }
+
     public func export(to url: URL, filetype: NSBitmapImageRep.FileType) throws {
         guard let data = tiffRepresentation,
               let rep = NSBitmapImageRep(data: data),

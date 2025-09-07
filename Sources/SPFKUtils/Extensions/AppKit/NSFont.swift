@@ -1,6 +1,14 @@
 import AppKit
 
 extension NSFont {
+    public var fontHeight: CGFloat {
+        boundingRectForFont.size.height
+    }
+
+    public func width(for string: String) -> CGFloat {
+        string.size(withAttributes: [.font: self]).width
+    }
+
     /// Utility to create a font from a URL such as inside a package
     ///
     /// - Parameters:
@@ -55,7 +63,7 @@ extension NSFont {
     public static let largeSystemFont = NSFont.systemFont(
         ofSize: NSFont.systemFontSize(for: .large)
     )
-    
+
     public static let largeBoldSystemFont = NSFont.boldSystemFont(
         ofSize: NSFont.systemFontSize(for: .large)
     )

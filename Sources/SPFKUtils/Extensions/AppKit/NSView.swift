@@ -137,6 +137,7 @@ extension NSView {
         }
 
         bitmap.size = bounds.size
+
         cacheDisplay(in: bounds, to: bitmap)
 
         return bitmap

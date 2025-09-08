@@ -329,46 +329,54 @@ public enum FileSystem {
             options.insert(.skipsPackageDescendants)
         }
 
-        if let enumerator = FileManager().enumerator(
+        guard let enumerator = FileManager().enumerator(
             at: directory,
             includingPropertiesForKeys: [],
             options: options
-        ) {
-            while var localURL = enumerator.nextObject() as? URL {
-                // resolve target if it's an alias.
-                // an alias/symlink can be a file or folder.
-                if localURL.isAlias, let resolved = localURL.resolveAlias() {
-                    localURL = resolved
-                }
+        ) else {
+            return []
+        }
 
-                if localURL.isPackage && skipsPackageDescendants {
-                    // SKIP
+        while var localURL = enumerator.nextObject() as? URL {
+            // resolve target if it's an alias.
+            // an alias/symlink can be a file or folder.
+            if localURL.isAlias, let resolved = localURL.resolveAlias() {
+                localURL = resolved
+            }
 
-                } else if localURL.isPackage && !allowedPackageTypes.contains(localURL.pathExtension) {
-                    // treat package as leaf
+            if localURL.isPackage && skipsPackageDescendants {
+                // SKIP
+                continue
+
+            } else if localURL.isPackage && !allowedPackageTypes.contains(localURL.pathExtension) {
+                // treat package as leaf
+                allFiles.append(localURL)
+
+            } else if localURL.isDirectoryOrPackage && recursive {
+                // treat package as directory
+                allFiles += getFileURLs(
+                    in: localURL,
+                    withExtension: withExtension,
+                    recursive: recursive,
+                    skipsHiddenFiles: skipsHiddenFiles,
+                    skipsPackageDescendants: skipsPackageDescendants
+                )
+
+            } else if let withExtension {
+                if localURL.pathExtension.equalsIgnoringCase(withExtension) {
                     allFiles.append(localURL)
-
-                } else if localURL.isDirectoryOrPackage && recursive {
-                    // treat package as directory
-                    allFiles += getFileURLs(in: localURL,
-                                            withExtension: withExtension,
-                                            recursive: recursive,
-                                            skipsHiddenFiles: skipsHiddenFiles,
-                                            skipsPackageDescendants: skipsPackageDescendants)
-
-                } else if let withExtension {
-                    if localURL.pathExtension.equalsIgnoringCase(withExtension) {
-                        allFiles.append(localURL)
-                    }
-                } else {
-                    allFiles.append(localURL)
                 }
+            } else {
+                allFiles.append(localURL)
             }
         }
 
         if sorted {
             allFiles = allFiles.sorted {
-                $0.lastPathComponent.standardCompare(with: $1.lastPathComponent, ascending: true)
+                $0.lastPathComponent.standardCompare(
+                    with: $1.lastPathComponent,
+                    ascending: true
+                )
             }
         }
 
@@ -385,10 +393,9 @@ extension FileSystem {
         panel.title = message ?? "Please select a directory"
         panel.directoryURL = directoryURL
 
-        if panel.runModal() == .OK, let url = panel.url {
-            return url
-        } else {
-            return nil
-        }
+        guard panel.runModal() == .OK,
+              let url = panel.url else { return nil }
+
+        return url
     }
 }

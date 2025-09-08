@@ -249,6 +249,10 @@ extension NSImage {
         let newHeight = self.size.height * value
         let newSize = NSSize(width: newWidth, height: newHeight)
 
+        return scaled(to: newSize)
+    }
+
+    public func scaled(to newSize: CGSize) -> NSImage? {
         // Create a new NSImage with the calculated size
         let scaledImage = NSImage(size: newSize)
 
@@ -268,9 +272,8 @@ extension NSImage {
 
         // Unlock focus
         scaledImage.unlockFocus()
-
         NSGraphicsContext.current?.imageInterpolation = .default
-        
+
         return scaledImage
     }
 

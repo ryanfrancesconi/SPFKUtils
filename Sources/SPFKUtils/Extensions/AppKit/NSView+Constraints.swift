@@ -297,6 +297,8 @@ extension NSView {
 }
 
 public struct SuperviewConstraintPriorities {
+    public static let defaultHigh = SuperviewConstraintPriorities(equalTo: defaultValue)
+    
     public static let defaultValue: Float = NSLayoutConstraint.Priority.defaultHigh.rawValue
 
     public var leading: Float

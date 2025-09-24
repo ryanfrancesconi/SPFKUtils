@@ -259,13 +259,15 @@ extension URL {
         var stale = false
 
         do {
-            try self.init(resolvingBookmarkData: data,
-                          options: options,
-                          relativeTo: nil,
-                          bookmarkDataIsStale: &stale)
+            try self.init(
+                resolvingBookmarkData: data,
+                options: options,
+                relativeTo: nil,
+                bookmarkDataIsStale: &stale
+            )
 
         } catch {
-            Log.error(error)
+            // Log.error("resolvingBookmarkData", error, "stale: \(stale)")
             return nil
         }
     }

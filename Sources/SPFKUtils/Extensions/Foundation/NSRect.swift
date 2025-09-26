@@ -10,4 +10,8 @@ extension NSRect {
     public init(width: CGFloat, height: CGFloat) {
         self = NSRect(x: 0, y: 0, width: width, height: height)
     }
+    
+    public init(width: Int, height: Int) {
+        self = NSRect(x: 0, y: 0, width: width, height: height)
+    }
 }

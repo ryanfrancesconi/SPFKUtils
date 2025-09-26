@@ -1,0 +1,18 @@
+import AppKit
+
+extension NSBitmapImageRep {
+    public convenience init?(pixelsWide: Int, pixelsHigh: Int) {
+        self.init(
+            bitmapDataPlanes: nil,
+            pixelsWide: pixelsWide,
+            pixelsHigh: pixelsHigh,
+            bitsPerSample: 8,
+            samplesPerPixel: 4,
+            hasAlpha: true,
+            isPlanar: false,
+            colorSpaceName: .deviceRGB,
+            bytesPerRow: pixelsWide * 4,
+            bitsPerPixel: 32
+        )
+    }
+}

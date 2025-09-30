@@ -74,6 +74,7 @@ extension NSView {
             setFrameOrigin(point)
             return
         }
+
         let anim = CABasicAnimation()
         anim.fromValue = NSValue(point: frame.origin)
         anim.toValue = NSValue(point: point)
@@ -90,6 +91,7 @@ extension NSView {
             setFrameSize(size)
             return
         }
+
         let anim = CABasicAnimation()
         anim.fromValue = frame.size
         anim.toValue = size

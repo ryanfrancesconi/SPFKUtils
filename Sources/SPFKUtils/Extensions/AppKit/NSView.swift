@@ -32,14 +32,12 @@ extension NSView {
     @objc
     open func convertEventToSuperview(event: NSEvent) -> NSPoint {
         let localPoint = convert(event.locationInWindow, from: nil)
-        let svLocation = convert(localPoint, to: superview)
-        return svLocation
+        return convert(localPoint, to: superview)
     }
 
     @objc
     open func convertToSuperview(localPoint: NSPoint) -> NSPoint {
-        let svLocation = convert(localPoint, to: superview)
-        return svLocation
+        convert(localPoint, to: superview)
     }
 
     @objc

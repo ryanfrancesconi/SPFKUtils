@@ -1,30 +1,42 @@
 import AppKit
 
 extension NSView {
-    @objc
-    open func centerInSuperview() {
-        guard let superview else { return }
+    public var centerVerticalInSuperviewValue: CGFloat? {
+        guard let superview else { return nil }
+
+        return (superview.frame.height / 2) - (frame.height / 2)
+    }
+
+    public var centerHorizontalInSuperviewValue: CGFloat? {
+        guard let superview else { return nil }
+
+        return (superview.frame.height / 2) - (frame.height / 2)
+    }
+
+    public func centerInSuperview() {
+        guard let centerVerticalInSuperviewValue,
+              let centerHorizontalInSuperviewValue else { return }
 
         frame.origin = NSPoint(
-            x: (superview.frame.width / 2) - (frame.width / 2),
-            y: (superview.frame.height / 2) - (frame.height / 2)
+            x: centerHorizontalInSuperviewValue,
+            y: centerVerticalInSuperviewValue
         )
     }
 
     public func centerVerticalInSuperview() {
-        guard let superview else { return }
+        guard let centerVerticalInSuperviewValue else { return }
 
         frame.origin = NSPoint(
             x: frame.origin.x,
-            y: (superview.frame.height / 2) - (frame.height / 2)
+            y: centerVerticalInSuperviewValue
         )
     }
 
     public func centerHorizontalInSuperview() {
-        guard let superview else { return }
+        guard let centerHorizontalInSuperviewValue else { return }
 
         frame.origin = NSPoint(
-            x: (superview.frame.width / 2) - (frame.width / 2),
+            x: centerHorizontalInSuperviewValue,
             y: frame.origin.y
         )
     }

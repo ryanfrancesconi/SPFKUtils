@@ -2,7 +2,7 @@
 
 import Foundation
 
-public enum DirectoryEvent: Equatable {
+public enum DirectoryEvent: Equatable, Sendable {
     case new(files: [URL], source: URL)
     case removed(files: [URL], source: URL)
 

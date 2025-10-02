@@ -2,7 +2,7 @@
 
 import Foundation
 
-public class DirectoryObserver {
+public final class DirectoryObserver {
     static let retryCount: Int = 3
     static let pollInterval: TimeInterval = 1
 
@@ -168,11 +168,15 @@ extension DirectoryObserver {
         self.previousContents = newContents
 
         if !deletedElements.isEmpty {
-            eventHandler?(.removed(files: Array(deletedElements), source: url))
+            eventHandler?(
+                .removed(files: Array(deletedElements), source: url)
+            )
         }
 
         if !newElements.isEmpty {
-            eventHandler?(.new(files: Array(newElements), source: url))
+            eventHandler?(
+                .new(files: Array(newElements), source: url)
+            )
         }
     }
 }

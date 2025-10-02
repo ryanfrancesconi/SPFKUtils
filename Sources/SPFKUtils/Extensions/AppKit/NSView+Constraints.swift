@@ -296,15 +296,15 @@ extension NSView {
     }
 }
 
-public struct SuperviewConstraintPriorities {
+public struct SuperviewConstraintPriorities: Sendable {
     public static let defaultHigh = SuperviewConstraintPriorities(equalTo: defaultValue)
-    
+
     public static let defaultValue: Float = NSLayoutConstraint.Priority.defaultHigh.rawValue
 
-    public var leading: Float
-    public var trailing: Float
-    public var top: Float
-    public var bottom: Float
+    public let leading: Float
+    public let trailing: Float
+    public let top: Float
+    public let bottom: Float
 
     public init(equalTo value: Float) {
         leading = value

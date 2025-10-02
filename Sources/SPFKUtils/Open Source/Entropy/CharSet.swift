@@ -72,17 +72,20 @@ public struct CharSet {
     ///
     /// - throws: `.invalidCharCount` if String length not a multiple of 2
     /// - throws: `.charsNotUnique` if any character repeats
-    public init(_ chars: String) throws {
+    @Sendable public init(_ chars: String) throws {
         let length = chars.count
+        
         guard [2, 4, 8, 16, 32, 64].contains(length) else { throw EntropyStringError.invalidCharCount }
         guard CharSet.unique(chars) else { throw EntropyStringError.charsNotUnique }
 
         self.chars = chars
+        
         bitsPerChar = UInt8(log2(Float(length)))
         charsPerChunk = CharSet.lcm(bitsPerChar, Entropy.bitsPerByte) / bitsPerChar
 
         if CharSet.lcm(bitsPerChar, Entropy.bitsPerByte) == Entropy.bitsPerByte {
             ndxFn = CharSet.ndxFnForDivisor(bitsPerChar)
+
         } else {
             ndxFn = CharSet.ndxFnForNonDivisor(bitsPerChar)
         }

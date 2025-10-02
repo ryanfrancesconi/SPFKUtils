@@ -6,8 +6,8 @@ import Foundation
 ///
 /// Be careful with this class and only establish on known directories as it will perform
 /// a deep enumeration.
-public class DirectoryEnumerationObserver {
-    public private(set) var url: URL
+public final class DirectoryEnumerationObserver {
+    public let url: URL
 
     public weak var delegate: DirectoryEnumerationObserverDelegate?
 
@@ -19,7 +19,9 @@ public class DirectoryEnumerationObserver {
 
     public var isObserving: Bool { observers.isNotEmpty }
 
-    var eventQueue: [DirectoryEvent] = .init()
+    private var eventQueue: [DirectoryEvent] = .init()
+
+    var eventTask: Task<Void, Error>?
 
     public init(url: URL) throws {
         guard url.isDirectory else {
@@ -93,8 +95,6 @@ public class DirectoryEnumerationObserver {
         observers.removeAll()
     }
 
-    var eventTask: Task<Void, Error>?
-
     func queue(event: DirectoryEvent) {
         if !eventQueue.contains(event) {
             eventQueue.append(event)
@@ -103,11 +103,7 @@ public class DirectoryEnumerationObserver {
         eventTask?.cancel()
         eventTask = Task {
             try await Task.sleep(seconds: 1)
-
-            guard !Task.isCancelled else {
-                Log.error("XXX")
-                return
-            }
+            try Task.checkCancellation()
 
             try await self.delegate?.directoryUpdated(events: self.eventQueue)
             self.eventQueue.removeAll()

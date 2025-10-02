@@ -1,6 +1,7 @@
 import AppKit
 
 extension NSDraggingInfo {
+    @MainActor
     public func toFileURLs() throws -> [URL] {
         guard let items = draggingPasteboard.pasteboardItems, items.isNotEmpty,
               let types = draggingPasteboard.types else {

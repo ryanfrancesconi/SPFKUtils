@@ -66,6 +66,7 @@ public struct BundleProperties {
             HardwareInfo.description
     }
 
+    @MainActor
     public static func relaunch(afterDelay seconds: TimeInterval = 0.5) -> Never {
         let task = Process()
         task.launchPath = "/bin/sh"

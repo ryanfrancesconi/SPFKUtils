@@ -2,11 +2,11 @@ import AppKit
 
 extension NSFont {
     public var fontHeight: CGFloat {
-        boundingRectForFont.size.height
+        boundingRectForFont.size.height.int.cgFloat
     }
 
     public func width(for string: String) -> CGFloat {
-        string.size(withAttributes: [.font: self]).width
+        string.size(withAttributes: [.font: self]).width.int.cgFloat
     }
 
     /// Utility to create a font from a URL such as inside a package

@@ -385,6 +385,7 @@ public enum FileSystem {
 }
 
 extension FileSystem {
+    @MainActor
     public static func requestDirectory(message: String?, directoryURL: URL?) -> URL? {
         let panel = NSOpenPanel()
         panel.canChooseFiles = false

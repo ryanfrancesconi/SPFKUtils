@@ -1,16 +1,16 @@
 import AppKit
 
 extension NSView {
-    public var centerVerticalInSuperviewValue: CGFloat? {
+    var centerVerticalInSuperviewValue: CGFloat? {
         guard let superview else { return nil }
 
         return (superview.frame.height / 2) - (frame.height / 2)
     }
 
-    public var centerHorizontalInSuperviewValue: CGFloat? {
+    var centerHorizontalInSuperviewValue: CGFloat? {
         guard let superview else { return nil }
 
-        return (superview.frame.height / 2) - (frame.height / 2)
+        return (superview.frame.width / 2) - (frame.width / 2)
     }
 
     public func centerInSuperview() {

@@ -5,8 +5,12 @@ extension NSFont {
         boundingRectForFont.size.height.int.cgFloat
     }
 
+    public func size(for string: String) -> CGSize {
+        string.size(withAttributes: [.font: self])
+    }
+
     public func width(for string: String) -> CGFloat {
-        string.size(withAttributes: [.font: self]).width.int.cgFloat
+        size(for: string).width.int.cgFloat
     }
 
     /// Utility to create a font from a URL such as inside a package

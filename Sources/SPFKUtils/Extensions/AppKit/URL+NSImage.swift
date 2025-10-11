@@ -2,7 +2,7 @@ import AppKit
 
 extension URL {
     @_disfavoredOverload
-    public var icon: NSImage? {
+    public var finderIcon: NSImage? {
         guard isFileURL, exists else { return nil }
 
         guard let utType else {

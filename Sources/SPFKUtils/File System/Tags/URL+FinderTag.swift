@@ -1,3 +1,5 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
+
 import Foundation
 
 // https://developer.apple.com/documentation/coreservices/file_metadata/mditem/common_metadata_attribute_keys
@@ -46,7 +48,7 @@ extension URL {
     }
 
     public func set(tagColors: [TagColor]) throws {
-        let labels: [String] = tagColors.compactMap { $0.label }
+        let labels: [String] = tagColors.compactMap { $0.dataElement }
         try set(tagNames: labels)
     }
 

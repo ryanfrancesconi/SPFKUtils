@@ -1,3 +1,5 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
+
 import AppKit
 import Foundation
 import XAttr
@@ -10,22 +12,22 @@ public enum TagColor: Int, Hashable, CaseIterable, Comparable, Codable {
         lhs.name.standardCompare(with: rhs.name)
     }
 
-    case none   // 0
-    case gray   // 1
-    case green  // 2
-    case purple // 3
-    case blue   // 4
-    case yellow // 5
-    case red    // 6
-    case orange // 7
+    case none   = 0
+    case gray   = 1
+    case green  = 2
+    case purple = 3
+    case blue   = 4
+    case yellow = 5
+    case red    = 6
+    case orange = 7
 
     /// These are the data elements stored in
-    /// com.apple.metadata:_kMDItemUserTags
-    /// It's unfortunate to hardcode these strings
-    /// but the convenience is probably worth it.
-    public var label: String {
+    /// `com.apple.metadata:_kMDItemUserTags`
+    /// It's unfortunate to hardcode these strings,
+    /// but the alternative is reading the Finder preferences
+    /// which would be disallowed on a sandboxed app.
+    public var dataElement: String {
         switch self {
-        // the associated color is black, "none more black"
         case .none:     return ""           // 0
         case .gray:     return "Gray\n1"    // 1
         case .green:    return "Green\n2"   // 2
@@ -45,6 +47,8 @@ public enum TagColor: Int, Hashable, CaseIterable, Comparable, Codable {
         nsColor?.cgColor
     }
 
+    /// These should match `NSWorkspace.shared.fileLabels` and
+    /// `defaults read com.apple.Finder FavoriteTagNames`
     public var name: String {
         switch self {
         case .none:     return "None"       // 0
@@ -68,7 +72,7 @@ public enum TagColor: Int, Hashable, CaseIterable, Comparable, Codable {
     }
 
     public init?(label: String) {
-        for item in Self.allCases where item.label == label {
+        for item in Self.allCases where item.dataElement == label {
             self = item
             return
         }
@@ -82,26 +86,26 @@ public enum TagColor: Int, Hashable, CaseIterable, Comparable, Codable {
 
         // You can listen for notifications named didChangeFileLabelsNotification
         // to be notified when file labels change.
-        let tags = NSWorkspace.shared.fileLabels
+        let fileLabels = NSWorkspace.shared.fileLabels
 
         // This array has the same number of elements as fileLabels,
         // and the color at a given index corresponds to the label at the same index.
-        let colors = NSWorkspace.shared.fileLabelColors
+        let fileLabelColors = NSWorkspace.shared.fileLabelColors
 
-        for i in 0 ..< tags.count {
-            guard colors.indices.contains(i) else {
+        for i in 0 ..< fileLabels.count {
+            guard fileLabelColors.indices.contains(i) else {
                 // according to Apple this array should match
                 continue
             }
 
-            let tag = tags[i]
+            let fileLabel = fileLabels[i]
 
-            guard let label = TagColor(name: tag) else {
-                Log.error("Unknown label: \(tag)")
+            guard let tagColor = TagColor(name: fileLabel) else {
+                Log.error("Unknown label: \(fileLabel)") // shouldn't happen
                 continue
             }
 
-            array[label] = colors[i]
+            array[tagColor] = fileLabelColors[i]
         }
 
         return array
@@ -110,7 +114,7 @@ public enum TagColor: Int, Hashable, CaseIterable, Comparable, Codable {
 
 extension Array where Element == TagColor {
     public func propertyListData() throws -> Data {
-        let labels: [String] = self.map { $0.label }
+        let labels: [String] = self.map { $0.dataElement }
         return try labels.propertyListData()
     }
 }

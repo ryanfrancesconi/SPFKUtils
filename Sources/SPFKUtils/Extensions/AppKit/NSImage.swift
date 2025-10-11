@@ -245,14 +245,18 @@ extension NSImage {
 
     public func scaled(by value: CGFloat) -> NSImage? {
         // Calculate the new size based on the percentage
-        let newWidth = self.size.width * value
-        let newHeight = self.size.height * value
+        let newWidth = max(16, self.size.width * value)
+        let newHeight = max(16, self.size.height * value)
         let newSize = NSSize(width: newWidth, height: newHeight)
 
         return scaled(to: newSize)
     }
 
     public func scaled(to newSize: CGSize) -> NSImage? {
+        guard newSize != .zero else {
+            return nil
+        }
+
         // Create a new NSImage with the calculated size
         let scaledImage = NSImage(size: newSize)
 

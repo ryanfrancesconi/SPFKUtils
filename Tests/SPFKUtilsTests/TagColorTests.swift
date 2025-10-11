@@ -19,7 +19,7 @@ class TagColorTests: BinTestCase {
         deleteBinOnExit = false
         let url = try createFolder(named: #function)
 
-        let tagNames = ["Hello1", "Hello2", TagColor.none.label]
+        let tagNames = ["Hello1", "Hello2", TagColor.none.dataElement]
 
         try url.set(tagNames: tagNames)
         #expect(url.tagNames == tagNames)

@@ -1,6 +1,6 @@
 # SPFKUtils
 
-Shared utilities and extensions.
+Swift macOS utilities and extensions.
 
 ## About
 

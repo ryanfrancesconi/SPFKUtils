@@ -43,8 +43,6 @@ extension FourCharCode {
         }
 
         return string
-
-        // NSHFSTypeCodeFromFileType
     }
 
     /// Helper function to convert codes for Audio Units

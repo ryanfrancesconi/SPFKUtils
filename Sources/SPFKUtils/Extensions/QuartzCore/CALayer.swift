@@ -88,9 +88,11 @@ extension CALayer {
         frame.origin = newPoint
     }
 
-    public func rasterize(at size: CGSize? = nil,
-                          shouldAntialias: Bool = true,
-                          imageInterpolation: NSImageInterpolation = .default) -> CGImage? {
+    public func rasterize(
+        at size: CGSize? = nil,
+        shouldAntialias: Bool = true,
+        imageInterpolation: NSImageInterpolation = .default
+    ) -> CGImage? {
         let width = Int(size?.width ?? frame.width)
         let height = Int(size?.height ?? frame.height)
 
@@ -122,11 +124,8 @@ extension CALayer {
         return cgContext.makeImage()
     }
 
-    /// only want this for crisp text
     @objc open func updateRecursive(contentsScale: CGFloat) {
-        if self as? CATextLayer != nil {
-            self.contentsScale = contentsScale
-        }
+        self.contentsScale = contentsScale
 
         sublayers?.forEach {
             $0.updateRecursive(contentsScale: contentsScale)

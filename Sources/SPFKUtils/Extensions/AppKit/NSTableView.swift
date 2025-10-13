@@ -1,7 +1,7 @@
 import AppKit
 
 extension NSTableView {
-    public func selectNextRow(byExtendingSelection: Bool = false) {
+    public func selectNextRow(byExtendingSelection: Bool = false) throws {
         var nextRow = min(numberOfRows - 1, selectedRow + 1)
 
         if hiddenRowIndexes.isNotEmpty, hiddenRowIndexes.contains(nextRow) {
@@ -13,12 +13,20 @@ extension NSTableView {
             }
         }
 
+        guard nextRow > selectedRow else {
+            throw NSError(description: "This is the last row")
+        }
+
         let selectRow = IndexSet(integer: nextRow)
         selectRowIndexes(selectRow, byExtendingSelection: byExtendingSelection)
-        scrollRowToVisible(selectedRow)
+        scrollSelectedRowToVisible()
     }
 
-    public func selectPreviousRow(byExtendingSelection: Bool = false) {
+    public func selectPreviousRow(byExtendingSelection: Bool = false) throws {
+        guard selectedRow - 1 >= 0 else {
+            throw NSError(description: "This is the first row")
+        }
+
         var nextRow = max(0, selectedRow - 1)
 
         if hiddenRowIndexes.isNotEmpty, hiddenRowIndexes.contains(nextRow) {
@@ -34,6 +42,10 @@ extension NSTableView {
 
         let selectRow = IndexSet(integer: nextRow)
         selectRowIndexes(selectRow, byExtendingSelection: byExtendingSelection)
+        scrollSelectedRowToVisible()
+    }
+
+    public func scrollSelectedRowToVisible() {
         scrollRowToVisible(selectedRow)
     }
 }

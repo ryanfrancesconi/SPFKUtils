@@ -25,8 +25,8 @@ private let products: [PackageDescription.Product] = [
 ]
 
 private let dependencies: [PackageDescription.Package.Dependency] = [
-//    .package(path: "../SPFKTesting"),
-    .package(url: "https://github.com/ryanfrancesconi/SPFKTesting", branch: "main"),
+    .package(path: "../SPFKTesting"),
+//    .package(url: "https://github.com/ryanfrancesconi/SPFKTesting", branch: "main"),
     
     .package(url: "https://github.com/orchetect/OTCore", branch: "main"),
     .package(url: "https://github.com/orchetect/OTAtomics", branch: "main"),

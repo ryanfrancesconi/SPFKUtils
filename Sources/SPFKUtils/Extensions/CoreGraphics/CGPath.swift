@@ -34,7 +34,7 @@ extension CGPath {
         let width = Int(size.width)
         let height = Int(size.height)
 
-        Log.debug("Creating image at \(width)x\(height)")
+        // Log.debug("Creating image at size \(width)x\(height)")
 
         guard let bitmap = NSBitmapImageRep(
             bitmapDataPlanes: nil,

@@ -1,13 +1,60 @@
 import AppKit
 import CoreGraphics
 
-extension NSClipView {
-    public enum ScrollToBehavior {
-        case visible
-        case centerIfOutOfView
-        case centerAlways
+public enum ScrollAlignment {
+    case left
+    case center
+}
+
+public enum ScrollToBehavior {
+    case visible
+    case centerIfOutOfView
+    case centerAlways
+}
+
+extension NSScrollView {
+    public func scroll(to point: NSPoint, duration: Double) {
+        // Log.debug("Firing scroll event")
+
+        if duration > 0 {
+            NSAnimationContext.beginGrouping()
+            NSAnimationContext.current.duration = duration
+
+            contentView.animator().setBoundsOrigin(point)
+
+            reflectScrolledClipView(contentView)
+            NSAnimationContext.endGrouping()
+        } else {
+            scroll(point)
+        }
     }
 
+    public func updateHorizontalScroll(
+        position x: CGFloat,
+        alignment: ScrollAlignment = .center,
+        onlyIfNeeded: Bool = true
+    ) {
+        //
+        let visibleWidth = documentVisibleRect.width
+        let visibleOrigin = documentVisibleRect.origin
+
+        if onlyIfNeeded,
+           x > visibleOrigin.x, x < visibleOrigin.x + visibleWidth,
+           x < visibleOrigin.x + visibleWidth {
+            // Log.debug("In view, no scroll needed")
+            return
+        }
+
+        let widthOffset: CGFloat = alignment == .center ? (visibleWidth / 2) : 0
+        let y = contentView.bounds.origin.y
+        let adjustedX = x - widthOffset
+        let origin = NSPoint(x: adjustedX, y: y)
+
+        contentView.scroll(origin)
+    }
+}
+
+extension NSClipView {
     /// Default animation duration used for calls to `scroll(to:behavior:)` if not specified when calling the method.
     public static var scrollToAnimationDuration: Double = 0.3
 
@@ -19,9 +66,11 @@ extension NSClipView {
     ///   - duration: Animation duration for the scroll. If 0.0, scroll will not animate. Uses `scrollToAnimationDuration` value as default if not specified.
     /// - Returns: `true` if scrolling occurred, `false` if no scrolling occurred (`rect` was already visible.)
     @discardableResult
-    public func scroll(to rect: CGRect,
-                       behavior: ScrollToBehavior,
-                       animationDuration duration: Double = scrollToAnimationDuration) -> Bool {
+    public func scroll(
+        to rect: CGRect,
+        behavior: ScrollToBehavior,
+        animationDuration duration: Double = scrollToAnimationDuration
+    ) -> Bool {
         switch behavior {
         case .visible:
             return scroll(toRect: rect,
@@ -41,8 +90,10 @@ extension NSClipView {
 
     // MARK: - Helpers
 
-    private func scroll(toRect rect: CGRect,
-                        animationDuration duration: Double) -> Bool {
+    private func scroll(
+        toRect rect: CGRect,
+        animationDuration duration: Double
+    ) -> Bool {
         // unwrap refs
         guard let scrollView = enclosingScrollView,
               let docView = documentView else { return false }
@@ -116,18 +167,22 @@ extension NSClipView {
     }
 
     @discardableResult
-    private func scroll(toCenter rect: CGRect,
-                        alwaysCenter: Bool = true,
-                        animationDuration duration: Double) -> Bool {
+    private func scroll(
+        toCenter rect: CGRect,
+        alwaysCenter: Bool = true,
+        animationDuration duration: Double
+    ) -> Bool {
         scroll(toCenter: rect.center,
                alwaysCenter: alwaysCenter,
                animationDuration: duration)
     }
 
     @discardableResult
-    private func scroll(toCenter point: CGPoint,
-                        alwaysCenter: Bool = true,
-                        animationDuration duration: Double) -> Bool {
+    private func scroll(
+        toCenter point: CGPoint,
+        alwaysCenter: Bool = true,
+        animationDuration duration: Double
+    ) -> Bool {
         guard let scrollView = enclosingScrollView else { return false }
         let clipView = self
 

@@ -28,7 +28,7 @@ extension CGMutablePath {
 extension CGPath {
     public func toCGImage(
         at size: CGSize,
-        fillColor: CGColor,
+        fillColor: CGColor?,
         strokeColor: CGColor? = nil
     ) throws -> CGImage {
         let width = Int(size.width)
@@ -67,9 +67,12 @@ extension CGPath {
         context.imageInterpolation = .low
 
         context.cgContext.setAllowsAntialiasing(true)
-        context.cgContext.setFillColor(fillColor)
-        context.cgContext.addPath(self)
-        context.cgContext.fillPath()
+
+        if let fillColor {
+            context.cgContext.setFillColor(fillColor)
+            context.cgContext.addPath(self)
+            context.cgContext.fillPath()
+        }
 
         if let strokeColor {
             context.cgContext.setStrokeColor(strokeColor)

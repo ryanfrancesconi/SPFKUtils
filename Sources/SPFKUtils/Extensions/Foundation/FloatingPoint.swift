@@ -14,3 +14,9 @@ extension BinaryFloatingPoint {
         return divisor * (self / divisor).rounded(rule)
     }
 }
+
+extension Array where Element: FloatingPoint {
+    public func mean() -> Element {
+        reduce(0, +) / Element(count)
+    }
+}

@@ -28,9 +28,14 @@ extension CGMutablePath {
 extension CGPath {
     public func toCGImage(
         at size: CGSize,
-        fillColor: CGColor?,
+        fillColor: CGColor? = nil,
         strokeColor: CGColor? = nil
     ) throws -> CGImage {
+        guard fillColor != nil ||
+            strokeColor != nil else {
+            throw NSError(description: "You must define either stroke or fill color")
+        }
+
         let width = Int(size.width)
         let height = Int(size.height)
 

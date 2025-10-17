@@ -13,12 +13,12 @@ public actor ProgressTracker {
     }
 
     public init(total: Int) {
-        assert(total > 0)
-
         self.total = total
     }
 
     public func increment() -> ProgressValue1 {
+        guard total > 0 else { return 0 }
+
         guard index < total else { return 1 }
 
         index += 1

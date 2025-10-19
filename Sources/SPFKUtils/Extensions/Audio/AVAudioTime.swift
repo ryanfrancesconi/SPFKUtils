@@ -15,11 +15,13 @@ extension AVAudioTime {
             anchorTime.isSampleTimeValid && anchorTime.isHostTimeValid else {
             return self
         }
+
         if isHostTimeValid && anchorTime.isHostTimeValid {
             let secondsDiff = Double(hostTime.safeSubtract(anchorTime.hostTime)) * machTimeSecondsPerTick
             let sampleTime = anchorTime.sampleTime + AVAudioFramePosition(round(secondsDiff * anchorTime.sampleRate))
             let audioTime = AVAudioTime(hostTime: hostTime, sampleTime: sampleTime, atRate: anchorTime.sampleRate)
             return audioTime
+
         } else {
             let secondsDiff = Double(sampleTime - anchorTime.sampleTime) / anchorTime.sampleRate
             let hostTime = anchorTime.hostTime + secondsDiff / machTimeSecondsPerTick
@@ -40,6 +42,7 @@ extension AVAudioTime {
                                atRate: sampleRate)
         } else if isHostTimeValid {
             return AVAudioTime(hostTime: hostTime + seconds / machTimeSecondsPerTick)
+
         } else if isSampleTimeValid {
             return AVAudioTime(sampleTime: sampleTime + AVAudioFramePosition(seconds * sampleRate),
                                atRate: sampleRate)
@@ -87,7 +90,7 @@ extension AVAudioTime {
 /// - Parameters:
 ///   - left: Left Hand Side
 ///   - right: Right Hand Side
-public func + (left: AVAudioTime, right: Double) -> AVAudioTime {
+public func + (left: AVAudioTime, right: TimeInterval) -> AVAudioTime {
     left.offset(seconds: right)
 }
 
@@ -96,14 +99,14 @@ public func + (left: AVAudioTime, right: Double) -> AVAudioTime {
 ///   - left: Left Hand Side
 ///   - right: Right Hand Side
 public func + (left: AVAudioTime, right: Int) -> AVAudioTime {
-    left.offset(seconds: Double(right))
+    left.offset(seconds: TimeInterval(right))
 }
 
 /// Subtraction
 /// - Parameters:
 ///   - left: Left Hand Side
 ///   - right: Right Hand Side
-public func - (left: AVAudioTime, right: Double) -> AVAudioTime {
+public func - (left: AVAudioTime, right: TimeInterval) -> AVAudioTime {
     left.offset(seconds: -right)
 }
 
@@ -112,7 +115,7 @@ public func - (left: AVAudioTime, right: Double) -> AVAudioTime {
 ///   - left: Left Hand Side
 ///   - right: Right Hand Side
 public func - (left: AVAudioTime, right: Int) -> AVAudioTime {
-    left.offset(seconds: Double(-right))
+    left.offset(seconds: TimeInterval(-right))
 }
 
 private extension UInt64 {

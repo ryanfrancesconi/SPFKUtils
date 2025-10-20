@@ -2,17 +2,19 @@
 
 import Foundation
 
-public protocol Serializable: Codable {
-    init(data: Data) throws
-}
+/// Convenience protocol for property list data
+public protocol Serializable: SerializableEncoder, SerializableDecoder {}
+public protocol SerializableEncoder: Encodable {}
+public protocol SerializableDecoder: Decodable {}
 
-extension Serializable {
+extension SerializableEncoder {
     public var dataRepresentation: Data? {
         do {
             return try PropertyListEncoder().encode(self)
         } catch {
             Log.error(error)
         }
+
         return nil
     }
 
@@ -30,16 +32,18 @@ extension Serializable {
     public var base64EncodedString: String? {
         dataRepresentation?.base64EncodedString()
     }
+}
 
+extension SerializableDecoder {
     public init(base64EncodedString: String) throws {
         guard let data = Data(base64Encoded: base64EncodedString) else {
-            throw NSError(
-                domain: Bundle.main.bundleIdentifier ?? "",
-                code: 1,
-                userInfo: [NSLocalizedDescriptionKey: "Failed to parse string"]
-            )
+            throw NSError(description: "Failed to parse string")
         }
 
         try self.init(data: data)
+    }
+
+    public init(data: Data) throws {
+        self = try PropertyListDecoder().decode(Self.self, from: data)
     }
 }

@@ -6,6 +6,7 @@ public struct URLProperties: Hashable, Codable {
 
     public private(set) var modificationDate: Date?
     public private(set) var fileSize: UInt64?
+    public private(set) var fileSizeString: String?
 
     public var isModified: Bool {
         url.modificationDate != modificationDate
@@ -17,5 +18,9 @@ public struct URLProperties: Hashable, Codable {
 
         modificationDate = url.modificationDate
         fileSize = url.regularFileAllocatedSize
+
+        if let fileSize {
+            fileSizeString = FileSystem.byteCountToString(fileSize.int64)
+        }
     }
 }

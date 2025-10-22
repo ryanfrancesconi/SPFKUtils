@@ -4,7 +4,7 @@ import Foundation
 
 // MARK: - Common Date string formatting
 
-fileprivate let generalDateFormatter: DateFormatter = {
+fileprivate let dateStyleLong: DateFormatter = {
     let dateFormatter = DateFormatter()
     dateFormatter.dateStyle = .long
     dateFormatter.timeStyle = .long
@@ -12,22 +12,22 @@ fileprivate let generalDateFormatter: DateFormatter = {
     return dateFormatter
 }()
 
-fileprivate let simpleDateFormatter: DateFormatter = {
+fileprivate let dateStyleSimple: DateFormatter = {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "MMM d, h:mm a"
     dateFormatter.locale = .current
     return dateFormatter
 }()
 
-fileprivate let generalDateFormatter2: DateFormatter = {
+fileprivate let dateStyleMedium: DateFormatter = {
     let dateFormatter = DateFormatter()
-    dateFormatter.dateStyle = .long
+    dateFormatter.dateStyle = .medium
     dateFormatter.timeStyle = .short
     dateFormatter.locale = .current
     return dateFormatter
 }()
 
-fileprivate let generalDateFormatter3: DateFormatter = {
+fileprivate let dateStyleNoTime: DateFormatter = {
     let dateFormatter = DateFormatter()
     dateFormatter.dateStyle = .long
     dateFormatter.timeStyle = .none
@@ -36,20 +36,20 @@ fileprivate let generalDateFormatter3: DateFormatter = {
 }()
 
 extension Date {
-    public var formattedString: String {
-        generalDateFormatter.string(from: self)
+    public var longString: String { // formattedString
+        dateStyleLong.string(from: self)
     }
 
-    public var formattedString2: String {
-        generalDateFormatter2.string(from: self)
-    }
-
-    public var formattedString3: String {
-        generalDateFormatter3.string(from: self)
+    public var mediumString: String {
+        dateStyleMedium.string(from: self)
     }
 
     public var simpleString: String {
-        simpleDateFormatter.string(from: self)
+        dateStyleSimple.string(from: self)
+    }
+
+    public var onlyDateString: String {
+        dateStyleNoTime.string(from: self)
     }
 }
 
@@ -57,9 +57,9 @@ extension StringProtocol {
     public func toDate() -> Date? {
         switch self {
         case let str as String:
-            return generalDateFormatter.date(from: str)
+            return dateStyleLong.date(from: str)
         default:
-            return generalDateFormatter.date(from: String(self))
+            return dateStyleLong.date(from: String(self))
         }
     }
 }

@@ -50,7 +50,7 @@ public struct BundleProperties {
         }
 
         if let appModificationDate {
-            let builtOnDate = "Built on \(appModificationDate.formattedString3)"
+            let builtOnDate = "Built on \(appModificationDate.onlyDateString)"
             info += "\(builtOnDate)\n"
         }
 

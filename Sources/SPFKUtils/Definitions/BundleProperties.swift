@@ -4,6 +4,8 @@ import AppKit
 import Foundation
 
 public struct BundleProperties {
+    public static let shared = BundleProperties()
+
     public var applicationVersion = ApplicationVersion()
 
     public init() {}
@@ -79,8 +81,12 @@ public struct BundleProperties {
 }
 
 extension BundleProperties {
-    /// Return this applications Caches directory based on the main bundle ID such as
-    /// /Users/[USERNAME]/Library/Caches/[BUNDLE ID]
+    /// Return this application's default Caches directory based on the `bundleIdentifier`.
+    /// IE: /Users/[USERNAME]/Library/Caches/[BUNDLE ID]
+    /// or if it is sandboxed:
+    /// /Users/[USERNAME]/Library/Containers/[BUNDLE ID]/Data/Library/Caches/[BUNDLE ID]
+    ///
+    /// This directory doesn't exist automatically and needs to be created.
     public static var cachesDirectory: URL? {
         guard let id = Bundle.main.bundleIdentifier,
               let cachesDirectory = FileManager.default.urls(

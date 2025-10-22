@@ -4,13 +4,17 @@ import Foundation
 
 /// Convenience protocol for property list data
 public protocol Serializable: SerializableEncoder, SerializableDecoder {}
+
 public protocol SerializableEncoder: Encodable {}
 public protocol SerializableDecoder: Decodable {}
 
 extension SerializableEncoder {
     public var dataRepresentation: Data? {
         do {
-            return try PropertyListEncoder().encode(self)
+            let encoder = PropertyListEncoder()
+            encoder.outputFormat = .binary
+
+            return try encoder.encode(self)
         } catch {
             Log.error(error)
         }

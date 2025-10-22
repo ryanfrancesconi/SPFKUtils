@@ -65,8 +65,10 @@ extension StringProtocol {
 }
 
 extension Date {
-    public init?(posix string: String,
-                 dateFormat: String? = nil) {
+    public init?(
+        posix string: String,
+        dateFormat: String? = nil
+    ) {
         let dateFormat = dateFormat ?? "yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'"
         let dateFormatter = DateFormatter()
         let enUSPosixLocale = Locale(identifier: "en_US_POSIX")

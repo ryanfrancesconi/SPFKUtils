@@ -1,7 +1,6 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
 
 import Foundation
-import UniformTypeIdentifiers
 
 extension URL {
     public var exists: Bool {
@@ -155,89 +154,6 @@ extension URL {
     }
 }
 
-extension URL {
-    public var isEmpty: Bool {
-        guard isDirectoryOrPackage else { return false }
-
-        return directoryContents?.isEmpty == true
-    }
-
-    /// FileManager convenience: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]
-    /// - Parameter url: The directory to list files from
-    /// - Returns: a shallow (non-recursive) URL array of visible files or nil if unable
-    /// to read the directory
-    public var directoryContents: [URL]? {
-        try? listDirectory()
-    }
-
-    /// FileManager convenience: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]
-    /// - Parameter url: The directory to list files from
-    /// - Returns: a shallow (non-recursive) URL array of visible files or nil if unable
-    /// to read the directory
-    public func listDirectory(options mask: FileManager.DirectoryEnumerationOptions? = nil) throws -> [URL] {
-        guard exists else {
-            throw NSError(description: "\(self.path) doesn't exist")
-        }
-
-        guard isDirectoryOrPackage else {
-            throw NSError(description: "\(self.path) isn't a directory")
-        }
-
-        let resourceKeys: [URLResourceKey] = [.creationDateKey, .isDirectoryKey]
-
-        let mask = mask ?? [.skipsSubdirectoryDescendants, .skipsHiddenFiles]
-
-        return try FileManager.default.contentsOfDirectory(
-            at: self,
-            includingPropertiesForKeys: resourceKeys,
-            options: mask
-        ).sorted {
-            $0.lastPathComponent.standardCompare(with: $1.lastPathComponent, ascending: true)
-        }
-    }
-
-    public var hiddenFiles: [URL]? {
-        guard exists, isDirectoryOrPackage else { return nil }
-
-        let resourceKeys: [URLResourceKey] = [.creationDateKey, .isDirectoryKey]
-
-        guard let files = try? FileManager.default.contentsOfDirectory(
-            at: self,
-            includingPropertiesForKeys: resourceKeys,
-            options: [.skipsSubdirectoryDescendants]
-        ) else {
-            return nil
-        }
-
-        return files.filter {
-            $0.isHidden
-        }
-    }
-
-    public func appendingBackwardsCompatible(queryItems: [URLQueryItem]) -> URL? {
-        if #available(macOS 13.0, *) {
-            return self.appending(queryItems: queryItems)
-
-        } else {
-            var urlString = absoluteString
-
-            if urlString.last != "?" {
-                urlString += "?"
-            }
-
-            urlString += Self.queryString(items: queryItems)
-
-            return URL(string: urlString)
-        }
-    }
-
-    public static func queryString(items: [URLQueryItem]) -> String {
-        items.compactMap {
-            "\($0.name)=\($0.value ?? "")"
-        }.joined(separator: "&")
-    }
-}
-
 // MARK: - file size
 
 extension URL {
@@ -304,81 +220,15 @@ extension URL {
         // level) and block size.
         // In case totalFileAllocatedSize is unavailable we use the fallback value (excluding
         // meta data and compression) This value should always be available.
-        return UInt64(resourceValues.totalFileAllocatedSize ?? resourceValues.fileAllocatedSize ?? 0)
+        return UInt64(
+            resourceValues.totalFileAllocatedSize
+                ?? resourceValues.fileAllocatedSize
+                ?? 0
+        )
     }
 
     public var fileSize: Int? {
         guard let value = try? resourceValues(forKeys: [.fileSizeKey]) else { return nil }
         return value.fileSize
-    }
-}
-
-// MARK: - resourceValues, see URLTag for tag names
-
-extension URL {
-    public var mimeType: String {
-        let genericType = "application/octet-stream"
-
-        guard let type = UTType(filenameExtension: pathExtension),
-              let mimetype = type.preferredMIMEType else {
-            // hack, this isn't coming through.
-            if pathExtension == "caf" {
-                return "audio/x-caf"
-            }
-
-            return genericType
-        }
-
-        return mimetype
-    }
-
-    public var utType: UTType? {
-        try? resourceValues(forKeys: [.contentTypeKey]).contentType
-    }
-
-    public var documentKind: String? {
-        guard let value = try? resourceValues(forKeys: [.contentTypeKey]) else { return nil }
-        return value.contentType?.localizedDescription
-    }
-
-    public var creationDate: Date? {
-        guard let value = try? resourceValues(forKeys: [.creationDateKey]) else { return nil }
-        return value.creationDate
-    }
-
-    public var modificationDate: Date? {
-        guard let value = try? resourceValues(forKeys: [.contentModificationDateKey]) else { return nil }
-        return value.contentModificationDate
-    }
-
-    public var lastOpened: Date? {
-        let itemRef = MDItemCreateWithURL(nil, self as CFURL)
-        return MDItemCopyAttribute(itemRef, kMDItemLastUsedDate) as? Date
-    }
-
-    public var isDirectory: Bool {
-        guard let value = try? resourceValues(forKeys: [.isDirectoryKey]) else { return false }
-        return value.isDirectory == true
-    }
-
-    public var isPackage: Bool {
-        guard let value = try? resourceValues(forKeys: [.isPackageKey]) else { return false }
-        return value.isPackage == true
-    }
-
-    public var isDirectoryOrPackage: Bool {
-        isDirectory || isPackage
-    }
-
-    public var isAlias: Bool {
-        guard let value = try? resourceValues(forKeys: [.isAliasFileKey, .isSymbolicLinkKey]) else { return false }
-        return value.isAliasFile == true
-    }
-
-    public var isHidden: Bool {
-        guard !lastPathComponent.hasPrefix(".") else { return true }
-
-        guard let value = try? resourceValues(forKeys: [.isHiddenKey]) else { return false }
-        return value.isHidden == true
     }
 }

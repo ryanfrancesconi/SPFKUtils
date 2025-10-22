@@ -38,6 +38,12 @@ extension TestCaseModel {
     public func copyToBin(url: URL) throws -> URL {
         try copy(to: bin, url: url)
     }
+    
+    public func copyToBin(urls: [URL]) throws -> [URL] {
+        urls.compactMap {
+            try? copyToBin(url: $0)
+        }
+    }
 
     private func copy(to bin: URL, url input: URL) throws -> URL {
         let tmp = bin.appendingPathComponent(input.lastPathComponent)

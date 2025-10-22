@@ -3,21 +3,7 @@
 import AppKit
 import Foundation
 
-public struct FinderTag: Hashable, Codable {
-    public var tagColor: TagColor
-    public var label: String
-
-    public init(tagColor: TagColor) {
-        self.tagColor = tagColor
-        self.label = tagColor.name
-    }
-
-    public init(label: String) {
-        self.tagColor = TagColor.none
-        self.label = label
-    }
-}
-
+/// Describes the tags found and set by the finder such as colored labels
 public struct FinderTagGroup: Hashable, Codable, CustomStringConvertible {
     public var tags: [FinderTag] = .init()
     public private(set) var description: String = ""
@@ -54,5 +40,20 @@ public struct FinderTagGroup: Hashable, Codable, CustomStringConvertible {
         }
         .sorted()
         .joined(separator: ", ")
+    }
+}
+
+public struct FinderTag: Hashable, Codable {
+    public var tagColor: TagColor
+    public var label: String
+
+    public init(tagColor: TagColor) {
+        self.tagColor = tagColor
+        self.label = tagColor.name
+    }
+
+    public init(label: String) {
+        self.tagColor = TagColor.none
+        self.label = label
     }
 }

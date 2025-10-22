@@ -3,10 +3,12 @@
 import Foundation
 
 // https://developer.apple.com/documentation/coreservices/file_metadata/mditem/common_metadata_attribute_keys
+
+/// Parses the finder tags from this `URL`
 extension URL {
     static let userTagsKey = "com.apple.metadata:_kMDItemUserTags"
 
-    /// The values of all tags attached to the URL
+    /// The values of all tags attached to the `URL`
     public var tagNames: [String] {
         do {
             let data = try extendedAttributeValue(forName: Self.userTagsKey)

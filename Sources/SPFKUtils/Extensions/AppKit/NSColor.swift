@@ -73,7 +73,7 @@ extension NSColor {
     }
 
     public static var randomGray: NSColor {
-        let value = CGFloat.random(in: 0.0 ... 1.0)
+        let value = CGFloat.random(in: CGFloat.unitIntervalRange)
         
         let c = NSColor(calibratedRed: value,
                         green: value,

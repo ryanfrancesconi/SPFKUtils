@@ -3,7 +3,7 @@
 import Foundation
 
 /// Indicates a range of 0 ... 1
-public typealias ProgressValue1 = Double
+public typealias UnitInterval = Double
 
 /// Indicates a range of 0 ... 100
 public typealias Percentage = Double

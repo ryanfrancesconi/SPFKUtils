@@ -20,3 +20,7 @@ extension Array where Element: FloatingPoint {
         reduce(0, +) / Element(count)
     }
 }
+
+extension BinaryFloatingPoint {
+    public static var unitIntervalRange: ClosedRange<Self> { 0 ... 1 }
+}

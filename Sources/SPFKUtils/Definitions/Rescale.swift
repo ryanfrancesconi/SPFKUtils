@@ -7,10 +7,12 @@ public struct Rescale {
     public var domain0: Double
     public var domain1: Double
 
-    public init(domain0: Double,
-                domain1: Double,
-                range0: Double,
-                range1: Double) {
+    public init(
+        domain0: Double,
+        domain1: Double,
+        range0: Double,
+        range1: Double
+    ) {
         self.range0 = range0
         self.range1 = range1
         self.domain0 = domain0

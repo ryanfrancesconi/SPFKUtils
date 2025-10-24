@@ -4,7 +4,7 @@ import Foundation
 
 public protocol DictionaryKey: RawRepresentable<String>, CaseIterable, Hashable {}
 
-/// Conveniences for parsing JSON data
+/// Convenience handlers for parsing JSON data
 public struct DictionaryParser {
     public private(set) var payload: KeyValueDictionary
 

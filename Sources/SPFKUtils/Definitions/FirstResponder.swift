@@ -1,14 +1,16 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
+
 import AppKit
 
-/// Helper actions to assist with building main application menus without a xib
+/// Generates first responder actions to assist with building main application menus programatically.
+///
+/// `FirstResponder.send(action: .showHelp)`
 public class FirstResponder {
-    /// A subset of general responder actions which we care about
-    public enum Action {
+    /// A subset of general responder actions which are handled by this class
+    public enum Action: Equatable {
         case orderFrontStandardAboutPanel
-
         case hide
         case openDocument
-
         case undo
         case redo
         case cut
@@ -20,10 +22,8 @@ public class FirstResponder {
         case deselectAll
         case selectPrevious
         case selectNext
-
         case performMiniaturize
         case performZoom
-
         case showHelp
     }
 
@@ -31,10 +31,8 @@ public class FirstResponder {
         switch action {
         case .orderFrontStandardAboutPanel:
             send(selector: #selector(orderFrontStandardAboutPanel(_:)))
-
         case .openDocument:
             send(selector: #selector(openDocument(_:)))
-
         case .hide:
             send(selector: #selector(hide(_:)))
         case .undo:
@@ -59,12 +57,10 @@ public class FirstResponder {
             send(selector: #selector(selectPrevious(_:)))
         case .selectNext:
             send(selector: #selector(selectNext(_:)))
-
         case .performMiniaturize:
             send(selector: #selector(performMiniaturize(_:)))
         case .performZoom:
             send(selector: #selector(performZoom(_:)))
-
         case .showHelp:
             send(selector: #selector(showHelp(_:)))
         }
@@ -77,7 +73,7 @@ public class FirstResponder {
 
 // MARK: - Function Definitions
 
-// These do nothing other than provide a signature to send to the responder chain
+// These do nothing other than provide a signature to send out to the responder chain
 extension FirstResponder {
     // MARK: - App
 

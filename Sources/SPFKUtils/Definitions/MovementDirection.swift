@@ -14,6 +14,10 @@ public enum MovementDirection: Int {
     public var cgFloat: CGFloat { CGFloat(rawValue) }
     public var boolValue: Bool { self == .forward }
 
+    public var stringValue: String {
+        self == .forward ? "forward" : "backward"
+    }
+    
     public var inverse: MovementDirection {
         switch self {
         case .forward: return .backward

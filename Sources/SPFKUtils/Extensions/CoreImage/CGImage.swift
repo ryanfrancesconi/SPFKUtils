@@ -75,6 +75,14 @@ extension CGImage {
 }
 
 extension CGImage {
+    public var jpegRepresentation: Data? {
+        try? dataRepresentation(utType: .jpeg)
+    }
+
+    public var pngRepresentation: Data? {
+        try? dataRepresentation(utType: .png)
+    }
+
     /// Generate data for the image in the format defined by utType.
     /// - Parameters:
     ///   - utType: The UTType for the image to generate
@@ -94,8 +102,6 @@ extension CGImage {
         guard dpi >= 0 else {
             throw NSError(description: "invalid DPI \(dpi)")
         }
-
-        Log.debug("Creating CGImage \(width)x\(height)")
 
         var options: [CFString: Any] = [
             kCGImagePropertyPixelWidth: self.width,

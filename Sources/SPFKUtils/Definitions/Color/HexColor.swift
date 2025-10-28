@@ -1,12 +1,17 @@
 import AppKit
 import CoreGraphics
 
-public struct HexColor: Codable {
+public struct HexColor: Hashable, Codable {
     public private(set) var hexString: String
 
     public var nsColor: NSColor? {
         guard let rgba = try? RGBAColor(hexString: hexString) else { return nil }
         return NSColor(red: rgba.r, green: rgba.g, blue: rgba.b, alpha: rgba.a)
+    }
+
+    public init?(nsColor: NSColor) {
+        guard let string = nsColor.toHex() else { return nil }
+        self = HexColor(hexString: string)
     }
 
     public init(hexString: String) {

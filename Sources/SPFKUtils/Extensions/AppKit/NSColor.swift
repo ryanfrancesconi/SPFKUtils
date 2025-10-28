@@ -30,8 +30,8 @@ extension NSColor {
         )
     }
 
-    public convenience init?(htmlString: String) {
-        let hexColor = htmlString.replacingOccurrences(of: "#", with: "")
+    public convenience init?(hexString: String) {
+        let hexColor = hexString.replacingOccurrences(of: "#", with: "")
 
         let scanner = Scanner(string: hexColor)
         var hexNumber: UInt64 = 0

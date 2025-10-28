@@ -1,5 +1,6 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
 
+import CoreGraphics
 import CoreImage
 import Foundation
 import UniformTypeIdentifiers
@@ -47,7 +48,6 @@ extension CGImage {
     public func scaled(to size: CGSize) -> CGImage? {
         let width: Int = Int(size.width)
         let height: Int = Int(size.height)
-
         let bytesPerPixel = self.bitsPerPixel / self.bitsPerComponent
         let destBytesPerRow = width * bytesPerPixel
 
@@ -64,12 +64,94 @@ extension CGImage {
         ) else { return nil }
 
         context.interpolationQuality = .high
-        
+
         context.draw(
             self,
             in: CGRect(x: 0, y: 0, width: width, height: height)
         )
 
         return context.makeImage()
+    }
+}
+
+extension CGImage {
+    /// Generate data for the image in the format defined by utType.
+    /// - Parameters:
+    ///   - utType: The UTType for the image to generate
+    ///   - dpi: The image's dpi
+    ///   - compression: The compression level to apply (0...1)
+    ///   - excludeGPSData: If true, strips any GPS information from the output
+    ///   - otherOptions: Other options as defined in [documentation](https://developer.apple.com/documentation/imageio/cgimagedestination)
+    /// - Returns: image data
+    public func dataRepresentation(
+        utType: UTType,
+        dpi: CGFloat = 72,
+        compression: CGFloat? = nil,
+        excludeGPSData: Bool = false,
+        otherOptions: [String: Any]? = nil
+    ) throws -> Data {
+        // Make sure that the DPI level is at least somewhat sane
+        guard dpi >= 0 else {
+            throw NSError(description: "invalid DPI \(dpi)")
+        }
+
+        Log.debug("Creating CGImage \(width)x\(height)")
+
+        var options: [CFString: Any] = [
+            kCGImagePropertyPixelWidth: self.width,
+            kCGImagePropertyPixelHeight: self.height,
+            kCGImagePropertyDPIWidth: dpi,
+            kCGImagePropertyDPIHeight: dpi,
+        ]
+
+        if utType == .jpeg, let compression {
+            options[kCGImageDestinationLossyCompressionQuality] = compression.clamped(to: 0 ... 1)
+        }
+
+        if excludeGPSData == true {
+            options[kCGImageMetadataShouldExcludeGPS] = true
+        }
+
+        // Add in the user's customizations
+        otherOptions?.forEach {
+            options[$0.0 as CFString] = $0.1
+        }
+
+        let uniformTypeIdentifier = utType.identifier as CFString
+
+        guard
+            let mutableData = CFDataCreateMutable(nil, 0),
+            let destination = CGImageDestinationCreateWithData(mutableData, uniformTypeIdentifier, 1, nil)
+        else {
+            throw NSError(description: "CGImageDestinationCreateWithData")
+        }
+
+        CGImageDestinationAddImage(destination, self, options as CFDictionary)
+        CGImageDestinationFinalize(destination)
+
+        let resultData = mutableData as Data
+
+        if resultData.count == 0 {
+            throw NSError(description: "resultData.count == 0")
+        }
+
+        return resultData
+    }
+
+    public static func createJPEG(from data: Data) throws -> CGImage {
+        guard let dataProvider = CGDataProvider(data: data as CFData) else {
+            throw NSError(description: "Failed to create CGDataProvider")
+        }
+
+        guard let cgImage = CGImage(
+            jpegDataProviderSource: dataProvider,
+            decode: nil,
+            shouldInterpolate: false,
+            intent: .defaultIntent
+        ) else {
+            throw NSError(description: "Failed to create CGImage")
+        }
+
+        return cgImage
     }
 }

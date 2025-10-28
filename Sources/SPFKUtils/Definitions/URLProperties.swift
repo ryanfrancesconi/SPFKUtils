@@ -3,7 +3,6 @@ import Foundation
 public struct URLProperties: Hashable, Codable {
     public private(set) var url: URL
     public private(set) var finderTags: FinderTagGroup
-
     public private(set) var modificationDate: Date?
     public private(set) var fileSize: UInt64?
     public private(set) var fileSizeString: String?

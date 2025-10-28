@@ -1,5 +1,8 @@
 import AppKit
 
+// TODO: clean up all this redundancy and make sure there are tests
+// SEE: HexColor, RGBAColor
+
 extension NSColor {
     public var isLight: Bool {
         var r: CGFloat = 0.0
@@ -74,7 +77,7 @@ extension NSColor {
 
     public static var randomGray: NSColor {
         let value = CGFloat.random(in: CGFloat.unitIntervalRange)
-        
+
         let c = NSColor(calibratedRed: value,
                         green: value,
                         blue: value,
@@ -119,6 +122,41 @@ extension NSColor {
 }
 
 extension NSColor {
+    public func toHex(alpha: Bool = false) -> String? {
+        guard let components = cgColor.components,
+              components.count >= 3 else {
+            return nil
+        }
+
+        let r = Float(components[0])
+        let g = Float(components[1])
+        let b = Float(components[2])
+        var a = Float(1.0)
+
+        if components.count >= 4 {
+            a = Float(components[3])
+        }
+
+        if alpha {
+            return String(
+                format: "%02lX%02lX%02lX%02lX",
+                lroundf(r * 255),
+                lroundf(g * 255),
+                lroundf(b * 255),
+                lroundf(a * 255)
+            )
+        } else {
+            return String(
+                format: "%02lX%02lX%02lX",
+                lroundf(r * 255),
+                lroundf(g * 255),
+                lroundf(b * 255)
+            )
+        }
+    }
+}
+
+extension NSColor {
     public var floatArray: SIMD4<Float> {
         var color = self
         let needsConversion = colorSpace != .deviceRGB && colorSpace != .genericRGB
@@ -148,10 +186,12 @@ extension NSColor {
 
         guard components.count >= 4 else { return nil }
 
-        let color = NSColor(calibratedRed: components[0],
-                            green: components[1],
-                            blue: components[2],
-                            alpha: components[3]).usingColorSpace(.genericRGB)
+        let color = NSColor(
+            calibratedRed: components[0],
+            green: components[1],
+            blue: components[2],
+            alpha: components[3]
+        ).usingColorSpace(.genericRGB)
 
         return color
     }

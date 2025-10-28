@@ -15,7 +15,7 @@ public struct LoudnessDescription: Comparable, Hashable, Codable {
     public var truePeak: Float?
 
     /// A summary suitable for displaying in a UI
-    public var description: String {
+    public var stringValue: String {
         var out = ""
 
         let lufsString = lufs?.string(decimalPlaces: 1) ?? "N/A"

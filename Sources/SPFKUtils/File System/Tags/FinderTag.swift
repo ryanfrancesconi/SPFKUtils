@@ -4,9 +4,9 @@ import AppKit
 import Foundation
 
 /// Describes the tags found and set by the finder such as colored labels
-public struct FinderTagGroup: Hashable, Codable, CustomStringConvertible {
+public struct FinderTagGroup: Hashable, Codable {
     public var tags: [FinderTag] = .init()
-    public private(set) var description: String = ""
+    public private(set) var stringValue: String = ""
 
     public var defaultColor: NSColor? {
         guard let first = tags.first,
@@ -35,7 +35,7 @@ public struct FinderTagGroup: Hashable, Codable, CustomStringConvertible {
     public init(tags: [FinderTag]) {
         self.tags = tags
 
-        self.description = tags.map {
+        self.stringValue = tags.map {
             $0.label
         }
         .sorted()

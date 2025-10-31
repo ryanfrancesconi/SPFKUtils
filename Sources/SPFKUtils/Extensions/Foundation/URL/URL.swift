@@ -105,55 +105,6 @@ extension URL {
     }
 }
 
-// MARK: - Bookmark Convenience
-
-extension URL {
-    public func toBookmarkString(options: URL.BookmarkCreationOptions = [.withSecurityScope]) -> String? {
-        guard exists else { return nil }
-        return try? bookmarkData(options: options).base64EncodedString()
-    }
-
-    public init?(base64EncodedBookmarkString string: String, options: BookmarkResolutionOptions = .withSecurityScope) {
-        guard let data = Data(base64Encoded: string) else {
-            Log.error("Failed to resolve data string")
-            return nil
-        }
-
-        var stale = false
-
-        do {
-            try self.init(
-                resolvingBookmarkData: data,
-                options: options,
-                relativeTo: nil,
-                bookmarkDataIsStale: &stale
-            )
-
-        } catch {
-            // Log.error("resolvingBookmarkData", error, "stale: \(stale)")
-            return nil
-        }
-    }
-
-    public init?(
-        fileURLWithPath path: String,
-        base64EncodedBookmarkString: String? = nil,
-        options: BookmarkResolutionOptions = .withSecurityScope
-    ) {
-        if FileManager.default.fileExists(atPath: path) {
-            self.init(fileURLWithPath: path)
-
-        } else if let base64EncodedBookmarkString,
-                  let url = URL(base64EncodedBookmarkString: base64EncodedBookmarkString, options: options),
-                  url.exists {
-            self = url
-
-        } else {
-            return nil
-        }
-    }
-}
-
 // MARK: - file size
 
 extension URL {

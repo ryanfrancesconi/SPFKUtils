@@ -1,58 +1,4 @@
 import AppKit
-import CoreGraphics
-
-public enum ScrollAlignment {
-    case left
-    case center
-}
-
-public enum ScrollToBehavior {
-    case visible
-    case centerIfOutOfView
-    case centerAlways
-}
-
-extension NSScrollView {
-    public func scroll(to point: NSPoint, duration: Double) {
-        // Log.debug("Firing scroll event")
-
-        if duration > 0 {
-            NSAnimationContext.beginGrouping()
-            NSAnimationContext.current.duration = duration
-
-            contentView.animator().setBoundsOrigin(point)
-
-            reflectScrolledClipView(contentView)
-            NSAnimationContext.endGrouping()
-        } else {
-            scroll(point)
-        }
-    }
-
-    public func updateHorizontalScroll(
-        position x: CGFloat,
-        alignment: ScrollAlignment = .center,
-        onlyIfNeeded: Bool = true
-    ) {
-        //
-        let visibleWidth = documentVisibleRect.width
-        let visibleOrigin = documentVisibleRect.origin
-
-        if onlyIfNeeded,
-           x > visibleOrigin.x, x < visibleOrigin.x + visibleWidth,
-           x < visibleOrigin.x + visibleWidth {
-            // Log.debug("In view, no scroll needed")
-            return
-        }
-
-        let widthOffset: CGFloat = alignment == .center ? (visibleWidth / 2) : 0
-        let y = contentView.bounds.origin.y
-        let adjustedX = x - widthOffset
-        let origin = NSPoint(x: adjustedX, y: y)
-
-        contentView.scroll(origin)
-    }
-}
 
 extension NSClipView {
     /// Default animation duration used for calls to `scroll(to:behavior:)` if not specified when calling the method.
@@ -73,18 +19,24 @@ extension NSClipView {
     ) -> Bool {
         switch behavior {
         case .visible:
-            return scroll(toRect: rect,
-                          animationDuration: duration)
+            return scroll(
+                toRect: rect,
+                animationDuration: duration
+            )
 
         case .centerIfOutOfView:
-            return scroll(toCenter: rect,
-                          alwaysCenter: false,
-                          animationDuration: duration)
+            return scroll(
+                toCenter: rect,
+                alwaysCenter: false,
+                animationDuration: duration
+            )
 
         case .centerAlways:
-            return scroll(toCenter: rect,
-                          alwaysCenter: true,
-                          animationDuration: duration)
+            return scroll(
+                toCenter: rect,
+                alwaysCenter: true,
+                animationDuration: duration
+            )
         }
     }
 
@@ -129,22 +81,13 @@ extension NSClipView {
         // clamp X to view edges if necessary
         let minX = docView.bounds.minX + 1
         let maxX = docView.bounds.width - clipView.documentVisibleRect.width
-        if newOrigin.x > maxX {
-            newOrigin.x = maxX
-        }
-        if newOrigin.x < minX {
-            newOrigin.x = minX
-        }
 
         // clamp Y to view edges if necessary
         let minY = docView.bounds.minY + 1
         let maxY = docView.bounds.height - clipView.documentVisibleRect.height
-        if newOrigin.y > maxY {
-            newOrigin.y = maxY
-        }
-        if newOrigin.y < minY {
-            newOrigin.y = minY
-        }
+
+        newOrigin.x = newOrigin.x.clamped(to: minX ... maxX)
+        newOrigin.y = newOrigin.y.clamped(to: minY ... maxY)
 
         guard newOrigin != clipView.bounds.origin else {
             // no scrolling necessary

@@ -5,10 +5,12 @@ import Foundation
 extension NSError {
     public convenience init(
         description: String,
-        code: Int = 1,
-        domain: String = Bundle.main.bundleIdentifier ?? "SPFKUtils"
+        domain: String = Bundle.main.bundleIdentifier ?? "SPFKUtils",
+        code: Int = 1
     ) {
-        let userInfo: [String: Any] = [NSLocalizedDescriptionKey: description]
+        let userInfo: [String: Any] = [
+            NSLocalizedDescriptionKey: description,
+        ]
 
         self.init(
             domain: domain,

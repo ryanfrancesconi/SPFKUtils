@@ -139,7 +139,8 @@ extension URL {
             at: self,
             includingPropertiesForKeys: Array(URL.allocatedSizeResourceKeys),
             options: [],
-            errorHandler: errorHandler) else {
+            errorHandler: errorHandler
+        ) else {
             return nil
         }
 

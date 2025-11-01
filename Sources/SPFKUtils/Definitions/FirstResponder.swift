@@ -22,6 +22,10 @@ public class FirstResponder {
         case deselectAll
         case selectPrevious
         case selectNext
+        case moveLeft
+        case moveLeftAndModifySelection
+        case moveRight
+        case moveRightAndModifySelection
         case performMiniaturize
         case performZoom
         case showHelp
@@ -57,6 +61,16 @@ public class FirstResponder {
             send(selector: #selector(selectPrevious(_:)))
         case .selectNext:
             send(selector: #selector(selectNext(_:)))
+
+        case .moveLeft:
+            send(selector: #selector(moveLeft(_:)))
+        case .moveLeftAndModifySelection:
+            send(selector: #selector(moveLeftAndModifySelection(_:)))
+        case .moveRight:
+            send(selector: #selector(moveRight(_:)))
+        case .moveRightAndModifySelection:
+            send(selector: #selector(moveRightAndModifySelection(_:)))
+
         case .performMiniaturize:
             send(selector: #selector(performMiniaturize(_:)))
         case .performZoom:
@@ -98,6 +112,11 @@ extension FirstResponder {
     @objc static func deselectAll(_ sender: Any) {}
     @objc static func selectPrevious(_ sender: Any) {}
     @objc static func selectNext(_ sender: Any) {}
+
+    @objc static func moveLeft(_ sender: Any) {}
+    @objc static func moveLeftAndModifySelection(_ sender: Any) {}
+    @objc static func moveRight(_ sender: Any) {}
+    @objc static func moveRightAndModifySelection(_ sender: Any) {}
 
     // MARK: - View
 

@@ -1,22 +1,24 @@
 import Foundation
 
+/// A centralized place to store URL access to simplify matching starts with stops
 public class SecureURLRegistry {
     public private(set) static var active = Set<URL>()
     public private(set) static var stale = Set<URL>()
     public private(set) static var errors = Set<URL>()
 
     @discardableResult
-    public static func create(from bookmarkData: Data) throws -> URL {
+    public static func create(resolvingBookmarkData data: Data) throws -> URL {
         var isStale = false
 
         let url = try URL(
-            resolvingBookmarkData: bookmarkData,
+            resolvingBookmarkData: data,
             options: [.withSecurityScope],
             bookmarkDataIsStale: &isStale
         )
 
         guard !isStale else {
             stale.insert(url)
+
             throw NSError(
                 description: "File at \(url.path) isn't accessible.",
                 domain: NSURLErrorDomain,
@@ -44,13 +46,9 @@ public class SecureURLRegistry {
     }
 
     public static func releaseAll() {
-        Log.debug("Releasing", active.count, "active urls,", stale.count, "stale")
+        Log.debug("Releasing", active.count, "security scoped urls,", stale.count, "stale")
 
         active.forEach {
-            $0.stopAccessingSecurityScopedResource()
-        }
-
-        stale.forEach {
             $0.stopAccessingSecurityScopedResource()
         }
 

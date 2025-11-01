@@ -36,3 +36,19 @@ extension NSScrollView {
         contentView.scroll(origin)
     }
 }
+
+extension NSScrollView {
+    public static func basicScrollView() -> NSScrollView {
+        let scrollView = NSScrollView()
+        scrollView.autohidesScrollers = true
+        scrollView.hasVerticalScroller = true
+        scrollView.hasHorizontalScroller = true
+        scrollView.usesPredominantAxisScrolling = true
+        scrollView.allowsMagnification = false
+        scrollView.horizontalScrollElasticity = .none
+        scrollView.verticalScrollElasticity = .none
+        scrollView.drawsBackground = false
+        scrollView.borderType = .noBorder
+        return scrollView
+    }
+}

@@ -87,8 +87,10 @@ public class FirstResponder {
 
 // MARK: - Function Definitions
 
-// These do nothing other than provide a signature to send out to the responder chain
-extension FirstResponder {
+// These do nothing other than provide a signature to send out to the responder chain.
+// While these preexist in AppKit, they are duplicated here to consolidate into one place.
+// They can originally be found in various classes such as NSApplication, NSDocumentController and so on.
+fileprivate extension FirstResponder {
     // MARK: - App
 
     @objc static func orderFrontStandardAboutPanel(_ sender: Any) {}
@@ -108,15 +110,18 @@ extension FirstResponder {
     @objc static func paste(_ sender: Any) {}
     @objc static func pasteAsPlainText(_ sender: Any) {}
     @objc static func delete(_ sender: Any) {}
+
     @objc static func selectAll(_ sender: Any) {}
     @objc static func deselectAll(_ sender: Any) {}
     @objc static func selectPrevious(_ sender: Any) {}
     @objc static func selectNext(_ sender: Any) {}
 
-    @objc static func moveLeft(_ sender: Any) {}
-    @objc static func moveLeftAndModifySelection(_ sender: Any) {}
-    @objc static func moveRight(_ sender: Any) {}
-    @objc static func moveRightAndModifySelection(_ sender: Any) {}
+    // MARK: - Text or Arrow Keys
+
+    @objc static func moveLeft(_ sender: Any) {} // Left Arrow
+    @objc static func moveLeftAndModifySelection(_ sender: Any) {} // Shift Left
+    @objc static func moveRight(_ sender: Any) {} // Right Arrow
+    @objc static func moveRightAndModifySelection(_ sender: Any) {} // Shift Right
 
     // MARK: - View
 

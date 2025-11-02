@@ -22,12 +22,10 @@ extension NSDraggingInfo {
             }
 
             if let value = item.string(forType: type),
-               let url = URL(string: value) {
+               let url = URL(string: value), url.exists {
                 urls.append(url)
             }
         }
-
-        Log.debug(urls)
 
         guard urls.isNotEmpty else {
             throw NSError(description: "No files were found")

@@ -23,11 +23,16 @@ public struct URLProperties: Hashable, Codable {
         self.url = url
         self.finderTags = FinderTagGroup(url: url)
 
-        modificationDate = url.modificationDate
+        self.modificationDate = url.modificationDate
+
         fileSize = url.regularFileAllocatedSize
 
         if let fileSize {
             fileSizeString = FileSystem.byteCountToString(fileSize.int64)
         }
+    }
+
+    public mutating func refresh() {
+        self = URLProperties(url: url)
     }
 }

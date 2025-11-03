@@ -13,12 +13,10 @@ extension URL {
         do {
             let data = try extendedAttributeValue(forName: Self.userTagsKey)
 
-            let tags: [String] = try PropertyListDecoder().decode(
+            return try PropertyListDecoder().decode(
                 [String].self,
                 from: data
             )
-
-            return tags
 
         } catch {
             // Log.error(error)
@@ -30,19 +28,19 @@ extension URL {
         tagNames.compactMap { TagColor(label: $0) }
     }
 
-    public var finderTags: [FinderTag] {
-        var tags = [FinderTag]()
+    public var finderTags: [FinderTagDescription] {
+        var tags = [FinderTagDescription]()
 
         for string in tagNames {
             guard let tagColor = TagColor(label: string) else {
                 tags.append(
-                    FinderTag(label: string)
+                    FinderTagDescription(label: string)
                 )
                 continue
             }
 
             tags.append(
-                FinderTag(tagColor: tagColor)
+                FinderTagDescription(tagColor: tagColor)
             )
         }
 

@@ -8,7 +8,7 @@ import UniformTypeIdentifiers
 
 class CGImageTests {
     @Test func cgImageDataRoundtrip() async throws {
-        let url = BundleResources.shared.cowbell_wav
+        let url = TestBundleResources.shared.cowbell_wav
         let cgImage = try #require(url.finderIcon?.cgImage)
         Log.debug(cgImage)
 

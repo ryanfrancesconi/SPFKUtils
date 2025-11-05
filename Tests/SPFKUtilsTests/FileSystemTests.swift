@@ -70,7 +70,7 @@ class FileSystemTests: BinTestCase {
 
     // seems to fail with [] - permissions?
     @Test func getFileURLs() throws {
-        let directory = BundleResources.shared.resourcesDirectory
+        let directory = TestBundleResources.shared.resourcesDirectory
 
         let urls = FileSystem.getFileURLs(in: directory, recursive: true)
 
@@ -91,7 +91,7 @@ class FileSystemTests: BinTestCase {
     }
 
     @Test func checksum() async throws {
-        let url = BundleResources.shared.mp3_id3
+        let url = TestBundleResources.shared.mp3_id3
 
         let result = try await url.checksum(algorithm: .md5)
 

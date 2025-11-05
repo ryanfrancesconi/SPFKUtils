@@ -16,7 +16,7 @@ public class DirectoryObserverTests: BinTestCase {
         observer.delegate = self
         try await observer.start()
 
-        let file = BundleResources.shared.mp3_id3
+        let file = TestBundleResources.shared.mp3_id3
 
         let newFile = bin.appendingPathComponent(file.lastPathComponent)
 

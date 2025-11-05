@@ -28,18 +28,18 @@ extension URL {
         tagNames.compactMap { TagColor(label: $0) }
     }
 
-    public var finderTags: [FinderTagDescription] {
-        var tags = [FinderTagDescription]()
+    public var finderTags: Set<FinderTagDescription> {
+        var tags = Set<FinderTagDescription>()
 
         for string in tagNames {
             guard let tagColor = TagColor(label: string) else {
-                tags.append(
+                tags.insert(
                     FinderTagDescription(label: string)
                 )
                 continue
             }
 
-            tags.append(
+            tags.insert(
                 FinderTagDescription(tagColor: tagColor)
             )
         }

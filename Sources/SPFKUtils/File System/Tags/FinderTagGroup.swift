@@ -5,8 +5,23 @@ import Foundation
 
 /// Describes the tags found and set by the finder such as colored labels
 public struct FinderTagGroup: Hashable, Codable {
-    public var tags: [FinderTagDescription] = .init()
-    public private(set) var stringValue: String = ""
+    public static let defaultTags: FinderTagGroup = .init(
+        tags: Set(
+            TagColor.allCases.map {
+                FinderTagDescription(tagColor: $0)
+            }
+        )
+    )
+
+    public var tags: Set<FinderTagDescription> = .init()
+
+    public var stringValue: String {
+        tags.map {
+            $0.label
+        }
+        .sorted()
+        .joined(separator: ", ")
+    }
 
     public var defaultColor: NSColor? {
         guard let first = tags.first,
@@ -32,13 +47,14 @@ public struct FinderTagGroup: Hashable, Codable {
         self = FinderTagGroup(tags: url.finderTags)
     }
 
-    public init(tags: [FinderTagDescription]) {
+    public init(tags: Set<FinderTagDescription>) {
         self.tags = tags
+    }
 
-        self.stringValue = tags.map {
-            $0.label
-        }
-        .sorted()
-        .joined(separator: ", ")
+    public mutating func insert(colors: Set<FinderTagDescription>) {
+        self.tags = self.tags.filter { $0.tagColor == .none }
+        let colors = colors.filter { $0.tagColor != .none }
+
+        self.tags = self.tags.union(colors)
     }
 }

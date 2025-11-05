@@ -80,7 +80,7 @@ public enum TagColor: Int, Hashable, CaseIterable, Comparable, Codable {
         return nil
     }
 
-    /// merges NSWorkspace fileLabels and fileLabelColors into one object
+    /// Combines NSWorkspace fileLabels and fileLabelColors into one object
     static let array: [TagColor: NSColor] = {
         var array = [TagColor: NSColor]()
 

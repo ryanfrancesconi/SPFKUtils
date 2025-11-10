@@ -3,6 +3,7 @@ import Foundation
 public struct URLProperties: Hashable, Codable {
     public private(set) var url: URL
     public var finderTags: FinderTagGroup
+    public private(set) var creationDate: Date?
     public private(set) var modificationDate: Date?
     public private(set) var fileSize: UInt64?
     public private(set) var fileSizeString: String?
@@ -14,7 +15,7 @@ public struct URLProperties: Hashable, Codable {
     public init(url: URL) {
         self.url = url
         self.finderTags = FinderTagGroup(url: url)
-
+        self.creationDate = url.creationDate
         self.modificationDate = url.modificationDate
 
         fileSize = url.regularFileAllocatedSize

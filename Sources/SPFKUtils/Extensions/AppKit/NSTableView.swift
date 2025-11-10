@@ -48,4 +48,16 @@ extension NSTableView {
     public func scrollSelectedRowToVisible() {
         scrollRowToVisible(selectedRow)
     }
+
+    
+    /// an `IndexSet` containing the indices of all columns in the table view
+    public var allColumnIndexes: IndexSet {
+        var indexSet = IndexSet()
+
+        for i in 0 ..< self.tableColumns.count {
+            indexSet.insert(i)
+        }
+
+        return indexSet
+    }
 }

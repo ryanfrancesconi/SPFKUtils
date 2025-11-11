@@ -1,11 +1,32 @@
 import AppKit
 
 extension URL {
-    @_disfavoredOverload
-    public var finderIcon: NSImage? {
+    /// Low resolution finder image
+    @_disfavoredOverload public var finderIcon: NSImage? {
         guard isFileURL, exists else { return nil }
 
         return NSWorkspace.shared.icon(forFile: path)
+    }
+
+    /// Higher resolution finder image
+    @_disfavoredOverload public var bestImageRepresentation: NSImage? {
+        guard isFileURL, exists else { return nil }
+
+        let size = NSSize(square: 1024)
+
+        guard let rep = NSWorkspace.shared.icon(
+            forFile: path
+        ).bestRepresentation(
+            for: NSRect(size: size),
+            context: nil,
+            hints: nil
+        ) else { return nil }
+
+        let image = NSImage(size: size)
+
+        image.addRepresentation(rep)
+
+        return image
     }
 
     @_disfavoredOverload

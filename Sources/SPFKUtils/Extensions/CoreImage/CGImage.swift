@@ -48,20 +48,23 @@ extension CGImage {
     public func scaled(to size: CGSize) -> CGImage? {
         let width: Int = Int(size.width)
         let height: Int = Int(size.height)
-        let bytesPerPixel = self.bitsPerPixel / self.bitsPerComponent
-        let destBytesPerRow = width * bytesPerPixel
 
-        guard let colorSpace = self.colorSpace else { return nil }
+        var binfo = bitmapInfo
+        binfo.pixelFormat = .packed
+        binfo.byteOrder = .orderDefault
+        binfo.alpha = .premultipliedLast
 
         guard let context = CGContext(
             data: nil,
             width: width,
             height: height,
-            bitsPerComponent: self.bitsPerComponent,
-            bytesPerRow: destBytesPerRow,
+            bitsPerComponent: bitsPerComponent,
+            bytesPerRow: bytesPerRow,
             space: colorSpace,
-            bitmapInfo: self.alphaInfo.rawValue
-        ) else { return nil }
+            bitmapInfo: binfo
+        ) else {
+            return nil
+        }
 
         context.interpolationQuality = .high
 

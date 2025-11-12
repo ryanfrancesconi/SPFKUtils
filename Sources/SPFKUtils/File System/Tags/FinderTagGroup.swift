@@ -24,8 +24,11 @@ public struct FinderTagGroup: Hashable, Codable {
     }
 
     public var defaultColor: NSColor? {
-        guard let first = tags.first,
-              let nsColor = first.tagColor.nsColor else {
+        guard let first = tags.first(where: { tag in
+            tag.tagColor != .none
+        }) else { return nil }
+
+        guard let nsColor = first.tagColor.nsColor else {
             return nil
         }
 

@@ -3,7 +3,8 @@ import AppKit
 extension NSDraggingInfo {
     @MainActor
     public func toFileURLs() throws -> [URL] {
-        guard let items = draggingPasteboard.pasteboardItems, items.isNotEmpty,
+        guard let items = draggingPasteboard.pasteboardItems,
+              items.isNotEmpty,
               let types = draggingPasteboard.types else {
             throw NSError(description: "pasteboardItems is empty")
         }
@@ -16,15 +17,13 @@ extension NSDraggingInfo {
                 continue
             }
 
-            guard type == .fileURL else {
-                Log.error("Not a fileURL")
+            guard let url = convertToURL(type: type, item: item) else {
+                Log.error("Failed to parse URL from \(type)")
+
                 continue
             }
 
-            if let value = item.string(forType: type),
-               let url = URL(string: value), url.exists {
-                urls.append(url)
-            }
+            urls.append(url)
         }
 
         guard urls.isNotEmpty else {
@@ -32,5 +31,22 @@ extension NSDraggingInfo {
         }
 
         return urls
+    }
+
+    private func convertToURL(type: NSPasteboard.PasteboardType, item: NSPasteboardItem) -> URL? {
+        guard type == .fileURL else {
+            return nil
+        }
+
+        guard let stringValue = item.string(forType: type) else {
+            Log.error("failed to convert", type, "to string")
+            return nil
+        }
+
+        guard let url = URL(string: stringValue), url.exists else {
+            return nil
+        }
+
+        return url
     }
 }

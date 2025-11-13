@@ -8,6 +8,15 @@ public protocol TestCaseModel: TypeDescribable {
 }
 
 extension TestCaseModel {
+    public var bin: URL { defaultURL }
+
+    public var deleteBinOnExit: Bool {
+        get { false }
+        set {}
+    }
+}
+
+extension TestCaseModel {
     public var defaultURL: URL {
         FileManager.default.temporaryDirectory
     }
@@ -38,7 +47,7 @@ extension TestCaseModel {
     public func copyToBin(url: URL) throws -> URL {
         try copy(to: bin, url: url)
     }
-    
+
     public func copyToBin(urls: [URL]) throws -> [URL] {
         urls.compactMap {
             try? copyToBin(url: $0)

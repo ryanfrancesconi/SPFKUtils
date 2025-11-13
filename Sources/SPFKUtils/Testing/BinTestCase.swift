@@ -14,7 +14,7 @@ open class BinTestCase: TestCaseModel {
     public init() {}
 
     deinit {
-        guard deleteBinOnExit else { return }
+        guard deleteBinOnExit, bin != defaultURL else { return }
         removeBin()
     }
 }

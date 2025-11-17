@@ -168,8 +168,8 @@ extension NSImage {
             return nil
         }
         // Get some points to center the cropping area.
-        let x = floor((resized.width - size.width) / 2)
-        let y = floor((resized.height - size.height) / 2)
+        let x: CGFloat = floor((resized.width - size.width) / 2)
+        let y: CGFloat = floor((resized.height - size.height) / 2)
 
         // Create the cropping frame.
         let croppedFrame = NSRect(x: x, y: y, width: size.width, height: size.height)

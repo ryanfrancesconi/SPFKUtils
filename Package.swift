@@ -23,6 +23,7 @@ private let products: [PackageDescription.Product] = [
 ]
 
 private let dependencies: [PackageDescription.Package.Dependency] = [
+    .package(path: "../SPFKBase"),
     .package(path: "../SPFKTesting"),
 //    .package(url: "https://github.com/ryanfrancesconi/SPFKTesting", branch: "main"),
     
@@ -31,7 +32,6 @@ private let dependencies: [PackageDescription.Package.Dependency] = [
     .package(url: "https://github.com/tadija/AEXML", from: "4.6.0"),
     .package(url: "https://github.com/rnine/Checksum", branch: "master"),
     .package(url: "https://github.com/apple/swift-numerics", from: "1.0.0"),
-    .package(url: "https://github.com/apple/swift-collections.git", branch: "main"),
     .package(url: "https://github.com/jozefizso/swift-xattr", branch: "main"),
 ]
 
@@ -41,13 +41,13 @@ private let targets: [PackageDescription.Target] = [
         name: name,
         dependencies: [
             .target(name: nameC),
-
+            .byNameItem(name: "SPFKBase", condition: nil),
+            
             .byNameItem(name: "OTCore", condition: nil),
             .byNameItem(name: "OTAtomics", condition: nil),
             .byNameItem(name: "AEXML", condition: nil),
             .byNameItem(name: "Checksum", condition: nil),
             .product(name: "Numerics", package: "swift-numerics"),
-            .product(name: "Collections", package: "swift-collections"),
             .product(name: "XAttr", package: "swift-xattr")
             
         ]

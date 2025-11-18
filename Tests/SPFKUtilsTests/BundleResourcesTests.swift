@@ -5,15 +5,24 @@ import Testing
 
 @Suite(.serialized)
 class BundleResourcesTests: BinTestCase {
-    @Test func testBin() async throws {
-        let tmpfile = try copyToBin(url: TestBundleResources.shared.wav_bext_v2)
+    var tmpfile: URL?
 
-        #expect(FileManager.default.fileExists(atPath: tmpfile.path))
+    override public init() {
+        super.init()
+        tmpfile = try? copyToBin(url: TestBundleResources.shared.mp3_no_metadata)
+    }
+
+    deinit {
+        removeBin()
+        #expect(tmpfile?.exists == false)
+    }
+
+    @Test func testBin() async throws {
+        #expect(tmpfile?.exists == true)
     }
 
     @Test func testBundle() async throws {
         let bundle = TestBundleResources.shared
-
-        Log.debug(bundle.bundleURL)
+        #expect(bundle.bundleURL.exists)
     }
 }

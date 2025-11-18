@@ -1,6 +1,6 @@
 import Foundation
 
-/// A centralized place to store URL access to simplify matching starts with stops
+/// A centralized place to store URL access to simplify matching start access with stop
 public class SecureURLRegistry {
     public private(set) static var active = Set<URL>()
     public private(set) static var stale = Set<URL>()
@@ -20,9 +20,7 @@ public class SecureURLRegistry {
             stale.insert(url)
 
             throw NSError(
-                description: "File at \(url.path) isn't accessible.",
-                domain: NSURLErrorDomain,
-                code: NSURLErrorCannotOpenFile
+                domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, description: "File at \(url.path) isn't accessible."
             )
         }
 
@@ -34,9 +32,7 @@ public class SecureURLRegistry {
             assertionFailure(message)
 
             throw NSError(
-                description: message,
-                domain: NSURLErrorDomain,
-                code: NSURLErrorCannotOpenFile
+                domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, description: message
             )
         }
 

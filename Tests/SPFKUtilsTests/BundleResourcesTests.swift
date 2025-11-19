@@ -7,8 +7,8 @@ import Testing
 class BundleResourcesTests: BinTestCase {
     var tmpfile: URL?
 
-    override public init() {
-        super.init()
+    override public init() async {
+        await super.init()
         tmpfile = try? copyToBin(url: TestBundleResources.shared.mp3_no_metadata)
     }
 

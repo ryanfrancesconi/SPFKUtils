@@ -77,8 +77,6 @@ extension NSMenu {
             return
         }
 
-        menu.autoenablesItems = false
-
         NSMenu.popUpContextMenu(
             menu,
             with: newEvent,

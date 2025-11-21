@@ -37,8 +37,4 @@ extension String {
 
         return output.uppercased()
     }
-
-    public var fourCharCode: FourCharCode? {
-        try? FourCharCode.from(string: self)
-    }
 }

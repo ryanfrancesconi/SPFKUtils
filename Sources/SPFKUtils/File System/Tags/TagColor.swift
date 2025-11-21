@@ -7,7 +7,7 @@ import XAttr
 // swiftformat:disable consecutiveSpaces
 
 /// Default macOS label colors
-public enum TagColor: Int, Hashable, CaseIterable, Comparable, Codable {
+public enum TagColor: Int, Hashable, CaseIterable, Comparable, Codable, Sendable {
     public static func < (lhs: TagColor, rhs: TagColor) -> Bool {
         lhs.name.standardCompare(with: rhs.name)
     }

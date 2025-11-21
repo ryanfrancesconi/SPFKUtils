@@ -57,9 +57,12 @@ extension NSMenu {
         }
     }
 
-    public static func popUpContextMenuBeneath(_ menu: NSMenu,
-                                               with event: NSEvent,
-                                               for view: NSView) {
+    @MainActor
+    public static func popUpContextMenuBeneath(
+        _ menu: NSMenu,
+        with event: NSEvent,
+        for view: NSView
+    ) {
         let localLocation = NSPoint(x: 0, y: -5)
         let windowLocation = view.convert(localLocation, to: nil)
 

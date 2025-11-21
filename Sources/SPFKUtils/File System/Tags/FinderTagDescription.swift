@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 
 /// Describes the tags found and set by the finder such as colored labels or custom strings
-public struct FinderTagDescription: Hashable, Codable, Equatable {
+public struct FinderTagDescription: Hashable, Codable, Equatable, Sendable {
     public var tagColor: TagColor
     public var label: String
 

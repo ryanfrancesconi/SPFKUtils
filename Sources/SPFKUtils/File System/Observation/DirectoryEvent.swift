@@ -2,9 +2,9 @@
 
 import Foundation
 
-public enum DirectoryEvent: Equatable, Sendable {
-    case new(files: [URL], source: URL)
-    case removed(files: [URL], source: URL)
+public enum DirectoryEvent: Hashable, Sendable {
+    case new(files: Set<URL>, source: URL)
+    case removed(files: Set<URL>, source: URL)
 
     public var isNew: Bool {
         switch self {
@@ -23,7 +23,7 @@ public enum DirectoryEvent: Equatable, Sendable {
         }
     }
 
-    public var files: [URL] {
+    public var files: Set<URL> {
         switch self {
         case let .new(files: files, source: _):
             return files

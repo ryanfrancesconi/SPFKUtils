@@ -29,7 +29,10 @@ extension NSFont {
 
         return CTFontCreateWithGraphicsFont(ref, ofSize, nil, nil)
     }
+}
 
+@MainActor
+extension NSFont {
     public static let miniSystemFont = NSFont.systemFont(
         ofSize: NSFont.systemFontSize(for: .mini)
     )

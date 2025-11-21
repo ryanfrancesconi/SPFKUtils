@@ -5,57 +5,53 @@ import SPFKUtils
 import Testing
 
 @Suite(.serialized)
-public class DirectoryObserverTests: BinTestCase {
-    var filesAdded = [URL]()
-    var filesRemoved = [URL]()
+final class DirectoryObserverTests: BinTestCase, @unchecked Sendable {
+    var added = [URL]()
+    var removed = [URL]()
 
     @Test func testDirectoryObserver() async throws {
         #expect(bin.exists)
 
-        let observer = try DirectoryEnumerationObserver(url: bin)
-        observer.delegate = self
+        let observer = try DirectoryEnumerationObserver(url: bin, delegate: self)
         try await observer.start()
 
-        let file = TestBundleResources.shared.mp3_id3
+        let urls = TestBundleResources.shared.formats
+        let newFiles = try copyToBin(urls: urls)
+        Log.debug("Copied to", newFiles)
 
-        let newFile = bin.appendingPathComponent(file.lastPathComponent)
+        try await wait(sec: 3) // must give it time to register
 
-        if newFile.exists { try newFile.delete() }
+        #expect(added.count == urls.count)
 
-        try FileManager.default.copyItem(at: file, to: newFile)
+        try newFiles.first?.delete()
+        try await wait(sec: 3) // must give it time to register
+        #expect(removed.count == 1)
 
-        Log.debug("Copied to", newFile.path)
+        newFiles.forEach {
+            try? $0.delete()
+        }
 
-        try await wait(sec: 5) // must give it time to register
+        try await wait(sec: 3) // must give it time to register
+        #expect(removed.count == urls.count)
 
-        #expect(filesAdded.count == 1)
+        await observer.stop()
 
-        try newFile.delete()
-
-        try await wait(sec: 5) // must give it time to register
-
-        #expect(filesRemoved.count == 1)
-
-        observer.stop()
-
-        try await wait(sec: 1)
-
-        filesAdded.removeAll()
-        filesRemoved.removeAll()
+        added.removeAll()
+        removed.removeAll()
     }
 }
 
 extension DirectoryObserverTests: DirectoryEnumerationObserverDelegate {
-    public func directoryUpdated(events: [DirectoryEvent]) async throws {
+    public func directoryUpdated(events: Set<DirectoryEvent>) async throws {
         for event in events {
             switch event {
             case let .new(files: files, source: from):
-                Log.debug("🟢 New", files, "in", from)
-                filesAdded += files
+                Log.debug("+ New", files, "in", from)
+                added += files
 
             case let .removed(files: files, source: from):
-                Log.debug("🔴 Removed", files, "in", from)
-                filesRemoved += files
+                Log.debug("- Removed", files, "in", from)
+                removed += files
             }
         }
     }

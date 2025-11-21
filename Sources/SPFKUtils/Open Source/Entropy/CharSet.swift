@@ -26,9 +26,9 @@
 //
 import Foundation
 
-public struct CharSet {
+public struct CharSet: Sendable {
     public typealias Ndx = UInt8
-    public typealias NdxFn = ([UInt8], Int, UInt8) -> Ndx
+    public typealias NdxFn =  @Sendable ([UInt8], Int, UInt8) -> Ndx
 
     // Predefined `CharSet`s
     /// RFC 4648 URL and file system safe characters
@@ -111,7 +111,7 @@ public struct CharSet {
     ///
     /// - returns: The a function to index into the `CharSet` characters.
     private static func ndxFnForDivisor(_ bitsPerChar: UInt8) -> NdxFn {
-        func ndxFn(bytes: [UInt8], chunk: Int, slice: UInt8) -> Ndx {
+        @Sendable func ndxFn(bytes: [UInt8], chunk: Int, slice: UInt8) -> Ndx {
             let lShift = UInt8(bitsPerChar)
             let rShift = Entropy.bitsPerByte - bitsPerChar
             return (bytes[chunk] << UInt8(slice * lShift)) >> rShift
@@ -132,7 +132,7 @@ public struct CharSet {
     ///
     /// - returns: The a function to index into the `CharSet` characters.
     private static func ndxFnForNonDivisor(_ bitsPerChar: UInt8) -> NdxFn {
-        func ndxFn(bytes: [UInt8], chunk: Int, slice: UInt8) -> Ndx {
+        @Sendable func ndxFn(bytes: [UInt8], chunk: Int, slice: UInt8) -> Ndx {
             let bitsPerByte = Entropy.bitsPerByte
             let slicesPerChunk = lcm(bitsPerChar, bitsPerByte) / bitsPerByte
             let bNum = chunk * Int(slicesPerChunk)

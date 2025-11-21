@@ -1,13 +1,16 @@
 import Foundation
 
 /// A centralized place to store URL access to simplify matching start access with stop
-public class SecureURLRegistry {
-    public private(set) static var active = Set<URL>()
-    public private(set) static var stale = Set<URL>()
-    public private(set) static var errors = Set<URL>()
+public actor SecureURLRegistry {
+    public static let shared = SecureURLRegistry()
+    private init (){}
+    
+    public private(set) var active = Set<URL>()
+    public private(set) var stale = Set<URL>()
+    public private(set) var errors = Set<URL>()
 
     @discardableResult
-    public static func create(resolvingBookmarkData data: Data) throws -> URL {
+    public func create(resolvingBookmarkData data: Data) throws -> URL {
         var isStale = false
 
         let url = try URL(
@@ -41,7 +44,7 @@ public class SecureURLRegistry {
         return url
     }
 
-    public static func releaseAll() {
+    public func releaseAll() {
         Log.debug("Releasing", active.count, "security scoped urls,", stale.count, "stale")
 
         active.forEach {

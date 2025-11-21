@@ -3,10 +3,10 @@
 import AppKit
 import Foundation
 
-public struct BundleProperties {
+public struct BundleProperties: Sendable {
     public static let shared = BundleProperties()
 
-    public var applicationVersion = ApplicationVersion()
+    public let applicationVersion = ApplicationVersion()
 
     public init() {}
 
@@ -123,7 +123,7 @@ extension BundleProperties {
      MINOR version when you add functionality in a backward compatible manner
      PATCH version when you make backward compatible bug fixes
      */
-    public struct ApplicationVersion {
+    public struct ApplicationVersion: Sendable {
         public private(set) var major: Int = 0
         public private(set) var minor: Int = 0
         public private(set) var patch: Int = 0

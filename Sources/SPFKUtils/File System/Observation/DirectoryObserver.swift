@@ -1,36 +1,58 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
 
+import Dispatch
 import Foundation
 
-public final class DirectoryObserver {
+extension DirectoryObserver: Equatable {
+    public static func == (lhs: DirectoryObserver, rhs: DirectoryObserver) -> Bool {
+        lhs.url == rhs.url
+    }
+}
+
+extension DirectoryObserver: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(url)
+    }
+}
+
+extension DirectoryObserver: CustomStringConvertible {
+    public var description: String {
+        "DirectoryObserver(url: \"\(url.path)\")"
+    }
+}
+
+public final class DirectoryObserver: @unchecked Sendable {
     static let retryCount: Int = 3
-    static let pollInterval: TimeInterval = 1
+    static let pollInterval: TimeInterval = 0.5
 
     private var source: DispatchSourceFileSystemObject?
-    private var previousContents: Set<URL>?
     private var queue: DispatchQueue?
     private var retriesLeft: Int = 0
     private var directoryChanged = false
+    private var previousContents: Set<URL>?
+
+    public weak var delegate: DirectoryObserverDelegate?
+
+    public let url: URL
+    public let eventMask: DispatchSource.FileSystemEvent
+
+    var eventTask: Task<Void, Error>?
 
     public var isWatching: Bool { source != nil }
 
-    public var eventHandler: ((DirectoryEvent) -> Void)?
-
-    public private(set) var url: URL
-
-    public init(url: URL) throws {
+    public init(url: URL, eventMask: DispatchSource.FileSystemEvent = [.write, .delete, .rename]) throws {
         guard url.isDirectory else {
             throw NSError(description: "URL must be a directory")
         }
 
         self.url = url
+        self.eventMask = eventMask
+
         previousContents = contents(of: url)
     }
 
     deinit {
         stop()
-        eventHandler = nil
-        // Log.debug("* { \(description) }")
     }
 
     public func start() throws {
@@ -43,11 +65,11 @@ public final class DirectoryObserver {
             throw NSError(description: "failed to open url: \(url.path)")
         }
 
-        queue = DispatchQueue.global(qos: .default)
+        queue = DispatchQueue.global(qos: .background)
 
         source = DispatchSource.makeFileSystemObjectSource(
             fileDescriptor: descriptor,
-            eventMask: [.write, .delete, .rename], // actions to monitor
+            eventMask: eventMask, // actions to monitor
             queue: queue
         )
 
@@ -68,12 +90,6 @@ public final class DirectoryObserver {
         source?.setEventHandler(handler: nil)
         source?.setCancelHandler(handler: nil)
         source = nil
-    }
-}
-
-extension DirectoryObserver: CustomStringConvertible {
-    public var description: String {
-        "DirectoryObserver(url: \"\(url.path)\")"
     }
 }
 
@@ -153,11 +169,15 @@ extension DirectoryObserver {
         } else {
             // Changes appear to be completed
             // Post a notification informing that the directory did change
-            try? postNotification()
+            eventTask?.cancel()
+            eventTask = Task {
+                try Task.checkCancellation()
+                try await postNotification()
+            }
         }
     }
 
-    private func postNotification() throws {
+    private func postNotification() async throws {
         guard let previousContents else { return }
 
         let newContents = contents(of: url)
@@ -168,14 +188,14 @@ extension DirectoryObserver {
         self.previousContents = newContents
 
         if !deletedElements.isEmpty {
-            eventHandler?(
-                .removed(files: Array(deletedElements), source: url)
+            await delegate?.handleObservation(event:
+                .removed(files: deletedElements, source: url)
             )
         }
 
         if !newElements.isEmpty {
-            eventHandler?(
-                .new(files: Array(newElements), source: url)
+            await delegate?.handleObservation(event:
+                .new(files: newElements, source: url)
             )
         }
     }

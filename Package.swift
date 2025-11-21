@@ -1,9 +1,9 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.2.1
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
-// This package will assume C / Objective-C interoperabilityimport SPFKTime
+// This package will assume C / Objective-C interoperability
 
 // Swift target
 private let name: String = "SPFKUtils"

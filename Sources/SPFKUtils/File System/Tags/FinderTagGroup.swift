@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 
 /// Describes the tags found and set by the finder such as colored labels
-public struct FinderTagGroup: Hashable, Codable {
+public struct FinderTagGroup: Hashable, Codable, Sendable {
     public static let defaultTags: FinderTagGroup = .init(
         tags: Set(
             TagColor.allCases.map {

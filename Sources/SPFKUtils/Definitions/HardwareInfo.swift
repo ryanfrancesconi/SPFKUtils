@@ -5,7 +5,7 @@ import Foundation
 
 /// Only accounting for macOS
 public enum HardwareInfo {
-    public enum ChipType: String {
+    public enum ChipType: String, Sendable {
         case x86_64
         case arm64
 
@@ -20,9 +20,8 @@ public enum HardwareInfo {
     /// For late-model Intel Macs, this returns x86_64. For Apple Silicon, it returns arm64.
     public static let chip: ChipType? = {
         var sysinfo = utsname()
-        let result = uname(&sysinfo)
 
-        guard result == EXIT_SUCCESS else { return nil }
+        guard EXIT_SUCCESS == uname(&sysinfo) else { return nil }
 
         let data = Data(bytes: &sysinfo.machine, count: Int(_SYS_NAMELEN))
 
@@ -33,43 +32,39 @@ public enum HardwareInfo {
         return ChipType(rawValue: rawValue)
     }()
 
-    private static func sysctl(name: String) -> String {
+    private static func sysctl(name: String) -> String? {
         var size = 0
-
-        sysctlbyname(name, nil, &size, nil, 0)
+        guard noErr == sysctlbyname(name, nil, &size, nil, 0) else {
+            return nil
+        }
 
         var machine = [CChar](repeating: 0, count: size)
 
-        sysctlbyname(name, &machine, &size, nil, 0)
+        guard noErr == sysctlbyname(name, &machine, &size, nil, 0) else {
+            return nil
+        }
 
-        return String(cString: machine)
+        let string = String(utf8String: machine)
+
+        return string
     }
 
     // MARK: - conveniences
 
     /// Apple M1 Max, etc
-    public static let chipname: String = {
-        sysctl(name: "machdep.cpu.brand_string")
-    }()
+    public static let chipname: String? = sysctl(name: "machdep.cpu.brand_string")
 
     public static let memory: String = {
         let memory = ProcessInfo.processInfo.physicalMemory / ByteCount.gigabyte.rawValue
         return "\(memory) GB memory"
     }()
 
-    public static let cores: Int = {
-        ProcessInfo.processInfo.activeProcessorCount
-    }()
-
     public static let description: String = {
         let os = ProcessInfo.processInfo.operatingSystemVersionString
-        let cores = ProcessInfo.processInfo.activeProcessorCount
 
-        var info = ""
-
-        info += "macOS \(os)\n"
-        info += "\(chipname), "
-        info += "\(cores) cores. "
+        var info = "macOS \(os)\n"
+        info += "\(chipname ?? "?"), "
+        info += "\(ProcessInfo.processInfo.activeProcessorCount) cores. "
         info += "\(memory).\n\n"
 
         return info

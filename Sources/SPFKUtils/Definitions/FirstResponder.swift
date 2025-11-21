@@ -81,7 +81,9 @@ public class FirstResponder {
     }
 
     private static func send(selector: Selector) {
-        NSApp.sendAction(selector, to: nil, from: self)
+        Task { @MainActor in
+            NSApp.sendAction(selector, to: nil, from: self)
+        }
     }
 }
 

@@ -6,106 +6,73 @@ import Foundation
 ///
 /// Be careful with this class and only establish on known directories as it will perform
 /// a deep enumeration.
-public final class DirectoryEnumerationObserver {
+public final class DirectoryEnumerationObserver: @unchecked Sendable {
     public let url: URL
+    public let delegate: DirectoryEnumerationObserverDelegate
 
-    public weak var delegate: DirectoryEnumerationObserverDelegate?
+    public let observers = ObservationData()
 
-    private var observers = [DirectoryObserver]()
-
-    private var observedDirectories: [URL] {
-        observers.map { $0.url }
-    }
-
-    public var isObserving: Bool { observers.isNotEmpty }
-
-    private var eventQueue: [DirectoryEvent] = .init()
+    private var eventQueue: Set<DirectoryEvent> = .init()
 
     var eventTask: Task<Void, Error>?
 
-    public init(url: URL) throws {
+    public init(url: URL, delegate: DirectoryEnumerationObserverDelegate) throws {
         guard url.isDirectory else {
             throw NSError(description: "URL must be a directory")
         }
 
         self.url = url
+        self.delegate = delegate
     }
 
     deinit {
-        stop()
-        delegate = nil
-        // Log.debug("* { \(description) }")
+        Log.debug("- { \(self) }")
     }
 
     public func start() async throws {
-        guard !isObserving else { return }
+        guard await !observers.isObserving else { return }
 
-        stop()
-
-        await collectChildDirectoriesAndStartObservation()
+        await stop()
+        try await collectChildDirectoriesAndStartObservation()
     }
 
-    public func stop() {
-        guard isObserving else { return }
-
-        stopAllFileObservation()
+    public func stop() async {
+        guard await observers.isObserving else { return }
+        await observers.removeAll()
+        eventQueue.removeAll()
+        eventTask?.cancel()
+        eventTask = nil
     }
 
-    private func collectChildDirectoriesAndStartObservation() async {
-        let allDirectories = [url] + FileSystem.getDirectories(in: url, recursive: true)
+    private func collectChildDirectoriesAndStartObservation() async throws {
+        let allDirectories = Set<URL>([url] + FileSystem.getDirectories(in: url, recursive: true))
 
-        do {
-            try startFileObservation(for: allDirectories)
-        } catch {
-            Log.error(error)
-        }
+        try await startFileObservation(for: allDirectories)
     }
 
-    private func startFileObservation(for urls: [URL]) throws {
+    private func startFileObservation(for urls: Set<URL>) async throws {
         for url in urls where url.isDirectory {
             let observer = try DirectoryObserver(url: url)
-
-            // can just forward this event
-            observer.eventHandler = { [weak self] in self?.handleObservation(event: $0) }
+            observer.delegate = self
             try observer.start()
 
-            observers.append(observer)
+            await observers.insert(observer)
         }
     }
 
-    private func stopFileObservation(for urls: [URL]) {
-        observers.forEach {
-            if urls.contains($0.url) {
-                $0.stop()
-                $0.eventHandler = nil
-            }
-        }
-
-        observers = observers.filter {
-            $0.eventHandler != nil
-        }
-    }
-
-    private func stopAllFileObservation() {
-        observers.forEach {
-            $0.stop()
-            $0.eventHandler = nil
-        }
-
-        observers.removeAll()
-    }
-
-    func queue(event: DirectoryEvent) {
+    private func queue(event: DirectoryEvent) async {
         if !eventQueue.contains(event) {
-            eventQueue.append(event)
+            eventQueue.insert(event)
         }
 
         eventTask?.cancel()
-        eventTask = Task {
+        eventTask = Task { [weak self] in
+            guard let self else { return }
+
             try await Task.sleep(seconds: 1)
             try Task.checkCancellation()
 
-            try await self.delegate?.directoryUpdated(events: self.eventQueue)
+            try await self.delegate.directoryUpdated(events: self.eventQueue)
             self.eventQueue.removeAll()
         }
     }
@@ -119,8 +86,8 @@ extension DirectoryEnumerationObserver: CustomStringConvertible {
 
 // MARK: - Event Handlers
 
-extension DirectoryEnumerationObserver {
-    func handleObservation(event: DirectoryEvent) {
+extension DirectoryEnumerationObserver: DirectoryObserverDelegate {
+    public func handleObservation(event: DirectoryEvent) async {
         switch event {
         case let .new(files: urls, source: source):
 
@@ -128,7 +95,7 @@ extension DirectoryEnumerationObserver {
 
             if source == url {
                 do {
-                    try startFileObservation(for: urls)
+                    try await startFileObservation(for: urls)
                 } catch {
                     Log.error(error)
                 }
@@ -138,14 +105,10 @@ extension DirectoryEnumerationObserver {
             Log.debug("removed", "source:", source, "urls", urls)
 
             if source == url {
-                stopFileObservation(for: urls)
+                await observers.remove(urls: urls)
             }
         }
 
-        queue(event: event)
+        await queue(event: event)
     }
-}
-
-public protocol DirectoryEnumerationObserverDelegate: AnyObject {
-    func directoryUpdated(events: [DirectoryEvent]) async throws
 }

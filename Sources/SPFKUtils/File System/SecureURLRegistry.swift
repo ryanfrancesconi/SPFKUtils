@@ -1,58 +1,60 @@
-import Foundation
+#if os(macOS)
+    import Foundation
 
-/// A centralized place to store URL access to simplify matching start access with stop
-public actor SecureURLRegistry {
-    public static let shared = SecureURLRegistry()
-    private init (){}
-    
-    public private(set) var active = Set<URL>()
-    public private(set) var stale = Set<URL>()
-    public private(set) var errors = Set<URL>()
+    /// A centralized place to store URL access to simplify matching start access with stop
+    public actor SecureURLRegistry {
+        public static let shared = SecureURLRegistry()
+        private init() {}
 
-    @discardableResult
-    public func create(resolvingBookmarkData data: Data) throws -> URL {
-        var isStale = false
+        public private(set) var active = Set<URL>()
+        public private(set) var stale = Set<URL>()
+        public private(set) var errors = Set<URL>()
 
-        let url = try URL(
-            resolvingBookmarkData: data,
-            options: [.withSecurityScope],
-            bookmarkDataIsStale: &isStale
-        )
+        @discardableResult
+        public func create(resolvingBookmarkData data: Data) throws -> URL {
+            var isStale = false
 
-        guard !isStale else {
-            stale.insert(url)
-
-            throw NSError(
-                domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, description: "File at \(url.path) isn't accessible."
+            let url = try URL(
+                resolvingBookmarkData: data,
+                options: [.withSecurityScope],
+                bookmarkDataIsStale: &isStale
             )
+
+            guard !isStale else {
+                stale.insert(url)
+
+                throw NSError(
+                    domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, description: "File at \(url.path) isn't accessible."
+                )
+            }
+
+            guard url.startAccessingSecurityScopedResource() else {
+                errors.insert(url)
+
+                let message = "startAccessingSecurityScopedResource failed for \(url.path)"
+
+                assertionFailure(message)
+
+                throw NSError(
+                    domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, description: message
+                )
+            }
+
+            active.insert(url)
+
+            return url
         }
 
-        guard url.startAccessingSecurityScopedResource() else {
-            errors.insert(url)
+        public func releaseAll() {
+            Log.debug("Releasing", active.count, "security scoped urls,", stale.count, "stale")
 
-            let message = "startAccessingSecurityScopedResource failed for \(url.path)"
+            active.forEach {
+                $0.stopAccessingSecurityScopedResource()
+            }
 
-            assertionFailure(message)
-
-            throw NSError(
-                domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, description: message
-            )
+            active.removeAll()
+            stale.removeAll()
+            errors.removeAll()
         }
-
-        active.insert(url)
-
-        return url
     }
-
-    public func releaseAll() {
-        Log.debug("Releasing", active.count, "security scoped urls,", stale.count, "stale")
-
-        active.forEach {
-            $0.stopAccessingSecurityScopedResource()
-        }
-
-        active.removeAll()
-        stale.removeAll()
-        errors.removeAll()
-    }
-}
+#endif

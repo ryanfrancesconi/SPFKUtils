@@ -1,6 +1,5 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
 
-import AppKit
 import Foundation
 
 public struct BundleProperties: Sendable {
@@ -66,17 +65,6 @@ public struct BundleProperties: Sendable {
         appVersionAndCopyright +
             "\n" +
             HardwareInfo.description
-    }
-
-    @MainActor
-    public static func relaunch(afterDelay seconds: TimeInterval = 0.5) -> Never {
-        let task = Process()
-        task.launchPath = "/bin/sh"
-        task.arguments = ["-c", "sleep \(seconds); open \"\(Bundle.main.bundlePath)\""]
-        task.launch()
-
-        NSApp.terminate(self)
-        exit(0)
     }
 }
 

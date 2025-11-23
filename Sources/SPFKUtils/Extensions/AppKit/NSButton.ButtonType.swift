@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension NSButton.ButtonType {
@@ -11,3 +12,4 @@ extension NSButton.ButtonType {
         }
     }
 }
+#endif

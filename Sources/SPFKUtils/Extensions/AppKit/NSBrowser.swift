@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension NSBrowser {
@@ -19,3 +20,4 @@ extension NSBrowser {
         selectRowIndexes(.init(), inColumn: 0)
     }
 }
+#endif

@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension NSView {
@@ -159,3 +160,4 @@ extension NSView {
         rasterize()?.representation(using: format, properties: [:])
     }
 }
+#endif

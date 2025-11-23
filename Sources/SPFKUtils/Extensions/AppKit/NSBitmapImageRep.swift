@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension NSBitmapImageRep {
@@ -16,3 +17,4 @@ extension NSBitmapImageRep {
         )
     }
 }
+#endif

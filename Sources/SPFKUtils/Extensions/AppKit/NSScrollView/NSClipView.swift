@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension NSClipView {
@@ -156,3 +157,4 @@ extension NSClipView {
         return true
     }
 }
+#endif

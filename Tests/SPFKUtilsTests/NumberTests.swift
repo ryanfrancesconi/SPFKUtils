@@ -1,4 +1,3 @@
-import AppKit
 import AudioToolbox
 import SPFKUtils
 import Testing

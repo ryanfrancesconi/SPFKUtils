@@ -19,7 +19,7 @@ public struct AudioEffectDescription: Equatable {
     public var name: String?
 
     /// The position and size of the window on screen
-    public var frame: NSRect?
+    public var frame: CGRect?
 
     public var presetID: String?
 
@@ -42,7 +42,7 @@ public struct AudioEffectDescription: Equatable {
         isBypassed: Bool = false,
         isVisible: Bool = false,
         name: String? = nil,
-        frame: NSRect? = nil,
+        frame: CGRect? = nil,
         fullStatePlist: AEXMLElement? = nil
     ) {
         self.uid = uid

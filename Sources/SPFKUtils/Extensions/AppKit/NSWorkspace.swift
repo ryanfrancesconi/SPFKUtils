@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension NSWorkspace {
@@ -16,3 +17,4 @@ extension NSWorkspace {
         }
     }
 }
+#endif

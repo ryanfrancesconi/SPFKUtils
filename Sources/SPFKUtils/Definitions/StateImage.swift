@@ -1,4 +1,4 @@
-
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 public struct StateImage {
@@ -29,3 +29,4 @@ public struct StateImage {
         self.alternateImage = alternateImage
     }
 }
+#endif

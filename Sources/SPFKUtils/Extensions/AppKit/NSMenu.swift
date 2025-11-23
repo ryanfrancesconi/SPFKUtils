@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension NSMenu {
@@ -87,3 +88,4 @@ extension NSMenu {
         )
     }
 }
+#endif

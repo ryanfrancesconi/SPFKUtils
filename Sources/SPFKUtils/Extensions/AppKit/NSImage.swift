@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension NSImage {
@@ -330,3 +331,4 @@ extension CGImage {
         )
     }
 }
+#endif

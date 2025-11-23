@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension NSFont {
@@ -77,3 +78,4 @@ extension NSFont {
 
     public static let headerSystemFont = NSFont.systemFont(ofSize: 14)
 }
+#endif

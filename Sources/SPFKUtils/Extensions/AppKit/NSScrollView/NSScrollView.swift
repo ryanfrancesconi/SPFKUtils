@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 import CoreGraphics
 
@@ -52,3 +53,4 @@ extension NSScrollView {
         return scrollView
     }
 }
+#endif

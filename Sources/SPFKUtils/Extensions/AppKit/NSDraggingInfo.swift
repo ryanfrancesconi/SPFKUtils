@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension NSDraggingInfo {
@@ -50,3 +51,4 @@ extension NSDraggingInfo {
         return url
     }
 }
+#endif

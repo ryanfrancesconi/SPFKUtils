@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension NSWindow {
@@ -20,3 +21,4 @@ extension NSWindow {
         setFrame(clampedFrame, display: true, animate: animate)
     }
 }
+#endif

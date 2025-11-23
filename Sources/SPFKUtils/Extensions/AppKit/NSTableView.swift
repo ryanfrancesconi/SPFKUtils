@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension NSTableView {
@@ -61,3 +62,4 @@ extension NSTableView {
         return indexSet
     }
 }
+#endif

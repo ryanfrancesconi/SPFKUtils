@@ -1,4 +1,4 @@
-
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension NSView {
@@ -323,3 +323,4 @@ public struct SuperviewConstraintPriorities: Sendable {
         self.bottom = bottom
     }
 }
+#endif

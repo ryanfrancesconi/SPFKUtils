@@ -35,7 +35,7 @@ extension UInt64 {
     }
 }
 
-@available(macOS 13, *)
+@available(macOS 13, iOS 16, *)
 extension Duration {
     public var timeInterval: TimeInterval {
         components.seconds.double +

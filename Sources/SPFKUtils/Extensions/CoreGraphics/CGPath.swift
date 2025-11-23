@@ -1,5 +1,6 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
 
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 import CoreGraphics
 
@@ -94,3 +95,4 @@ extension CGPath {
         return image
     }
 }
+#endif

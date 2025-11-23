@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension URL {
@@ -36,3 +37,4 @@ extension URL {
         return NSWorkspace.shared.icon(for: utType)
     }
 }
+#endif

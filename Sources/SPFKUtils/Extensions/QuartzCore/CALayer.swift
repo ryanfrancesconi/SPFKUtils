@@ -1,6 +1,5 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
 
-import AppKit
 import Foundation
 import QuartzCore
 
@@ -88,42 +87,6 @@ extension CALayer {
         frame.origin = newPoint
     }
 
-    public func rasterize(
-        at size: CGSize? = nil,
-        shouldAntialias: Bool = true,
-        imageInterpolation: NSImageInterpolation = .default
-    ) -> CGImage? {
-        let width = Int(size?.width ?? frame.width)
-        let height = Int(size?.height ?? frame.height)
-
-        guard let imageRep = NSBitmapImageRep(
-            bitmapDataPlanes: nil,
-            pixelsWide: width,
-            pixelsHigh: height,
-            bitsPerSample: 8,
-            samplesPerPixel: 4,
-            hasAlpha: true,
-            isPlanar: false,
-            colorSpaceName: .deviceRGB,
-            bytesPerRow: width * 4,
-            bitsPerPixel: 32
-        ),
-
-            let context = NSGraphicsContext(bitmapImageRep: imageRep) else {
-            Log.error("Failed to make context")
-            return nil
-        }
-
-        context.imageInterpolation = imageInterpolation
-        context.shouldAntialias = shouldAntialias
-
-        let cgContext = context.cgContext
-
-        render(in: cgContext)
-
-        return cgContext.makeImage()
-    }
-
     @objc open func updateRecursive(contentsScale: CGFloat) {
         self.contentsScale = contentsScale
 
@@ -132,3 +95,45 @@ extension CALayer {
         }
     }
 }
+
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+    import AppKit
+
+    extension CALayer {
+        public func rasterize(
+            at size: CGSize? = nil,
+            shouldAntialias: Bool = true,
+            imageInterpolation: NSImageInterpolation = .default
+        ) -> CGImage? {
+            let width = Int(size?.width ?? frame.width)
+            let height = Int(size?.height ?? frame.height)
+
+            guard let imageRep = NSBitmapImageRep(
+                bitmapDataPlanes: nil,
+                pixelsWide: width,
+                pixelsHigh: height,
+                bitsPerSample: 8,
+                samplesPerPixel: 4,
+                hasAlpha: true,
+                isPlanar: false,
+                colorSpaceName: .deviceRGB,
+                bytesPerRow: width * 4,
+                bitsPerPixel: 32
+            ),
+
+                let context = NSGraphicsContext(bitmapImageRep: imageRep) else {
+                Log.error("Failed to make context")
+                return nil
+            }
+
+            context.imageInterpolation = imageInterpolation
+            context.shouldAntialias = shouldAntialias
+
+            let cgContext = context.cgContext
+
+            render(in: cgContext)
+
+            return cgContext.makeImage()
+        }
+    }
+#endif

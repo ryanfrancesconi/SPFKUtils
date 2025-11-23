@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 extension NSMenuItem {
@@ -19,3 +20,4 @@ extension NSMenuItem {
         self.keyEquivalentModifierMask = keyEquivalentModifierMask
     }
 }
+#endif

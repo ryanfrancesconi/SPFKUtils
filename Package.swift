@@ -12,7 +12,8 @@ private let name: String = "SPFKUtils"
 private let nameC: String = "\(name)C"
 
 private let platforms: [PackageDescription.SupportedPlatform]? = [
-    .macOS(.v12)
+    .macOS(.v12),
+    .iOS(.v15),
 ]
 
 private let products: [PackageDescription.Product] = [
@@ -49,7 +50,6 @@ private let targets: [PackageDescription.Target] = [
             .byNameItem(name: "Checksum", condition: nil),
             .product(name: "Numerics", package: "swift-numerics"),
             .product(name: "XAttr", package: "swift-xattr")
-            
         ]
     ),
     
@@ -72,9 +72,6 @@ private let targets: [PackageDescription.Target] = [
             .byNameItem(name: name, condition: nil),
             .byNameItem(name: nameC, condition: nil),
             .byNameItem(name: "SPFKTesting", condition: nil)
-        ],
-        resources: [
-            .process("Resources")
         ]
     )
 ]

@@ -1,3 +1,4 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 // TODO: clean up all this redundancy and make sure there are tests
@@ -196,3 +197,4 @@ extension NSColor {
         return color
     }
 }
+#endif

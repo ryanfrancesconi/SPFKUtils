@@ -1,5 +1,6 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
 
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 /// Generates first responder actions to assist with building main application menus programatically.
@@ -136,3 +137,4 @@ fileprivate extension FirstResponder {
 
     @objc static func showHelp(_ sender: Any) {}
 }
+#endif

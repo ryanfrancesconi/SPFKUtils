@@ -1,4 +1,4 @@
-// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKAudio
 
 import AEXML
 import AudioToolbox
@@ -25,12 +25,6 @@ public struct AudioEffectDescription: Equatable {
 
     public var fullStateDictionary: [String: Any]?
 
-    /// plist of the current ui fullStateDictionary value
-    public var fullStatePlist: AEXMLElement? {
-        guard let fullStateDictionary else { return nil }
-        return try? PlistUtilities.dictionaryToPlist(dictionary: fullStateDictionary).root
-    }
-
     public var componentDescription: AudioComponentDescription? {
         guard let uid else { return nil }
         return AudioComponentDescription(uid: uid)
@@ -55,6 +49,14 @@ public struct AudioEffectDescription: Equatable {
         if let fullStatePlist {
             parse(fullState: fullStatePlist)
         }
+    }
+}
+
+extension AudioEffectDescription {
+    /// plist of the current ui fullStateDictionary value
+    public var fullStatePlist: AEXMLElement? {
+        guard let fullStateDictionary else { return nil }
+        return try? PlistUtilities.dictionaryToPlist(dictionary: fullStateDictionary).root
     }
 
     public mutating func parse(fullState: AEXMLElement) {

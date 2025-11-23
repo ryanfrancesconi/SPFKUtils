@@ -295,27 +295,6 @@ extension NSImage {
     }
 }
 
-//extension NSImage {
-//    /// Don't load images from `URL` on the main thread
-//    /// - Parameters:
-//    ///   - url: `URL` to load
-//    ///   - qos: optional quality of service
-//    ///   - completionHandler: returns a `NSImage` if possible
-//    public static func contentsOf(
-//        url: URL,
-//        qos: DispatchQoS.QoSClass = .default,
-//        completionHandler: @escaping (NSImage?) -> Void
-//    ) {
-//        DispatchQueue.global(qos: qos).async {
-//            let image = NSImage(contentsOf: url)
-//
-//            DispatchQueue.main.async {
-//                completionHandler(image)
-//            }
-//        }
-//    }
-//}
-
 extension CGImage {
     public static func contentsOf(
         url: URL,

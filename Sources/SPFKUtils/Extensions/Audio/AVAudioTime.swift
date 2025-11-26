@@ -12,7 +12,8 @@ extension AVAudioTime {
     public func extrapolateTimeShimmed(fromAnchor anchorTime: AVAudioTime) -> AVAudioTime {
         guard ((isSampleTimeValid && sampleRate == anchorTime.sampleRate) || isHostTimeValid) &&
             !(isSampleTimeValid && isHostTimeValid) &&
-            anchorTime.isSampleTimeValid && anchorTime.isHostTimeValid else {
+            anchorTime.isSampleTimeValid && anchorTime.isHostTimeValid
+        else {
             return self
         }
 
@@ -52,17 +53,17 @@ extension AVAudioTime {
 
     /// The time in seconds between receiver and otherTime.
     public func timeIntervalSince(otherTime: AVAudioTime) -> Double? {
-        if isHostTimeValid && otherTime.isHostTimeValid {
+        if isHostTimeValid, otherTime.isHostTimeValid {
             return Double(hostTime.safeSubtract(otherTime.hostTime)) * machTimeSecondsPerTick
         }
-        if isSampleTimeValid && otherTime.isSampleTimeValid {
+        if isSampleTimeValid, otherTime.isSampleTimeValid {
             return Double(sampleTime - otherTime.sampleTime) / sampleRate
         }
-        if isSampleTimeValid && isHostTimeValid {
+        if isSampleTimeValid, isHostTimeValid {
             let completeTime = otherTime.extrapolateTimeShimmed(fromAnchor: self)
             return Double(sampleTime - completeTime.sampleTime) / sampleRate
         }
-        if otherTime.isHostTimeValid && otherTime.isSampleTimeValid {
+        if otherTime.isHostTimeValid, otherTime.isSampleTimeValid {
             let completeTime = extrapolateTimeShimmed(fromAnchor: otherTime)
             return Double(completeTime.sampleTime - otherTime.sampleTime) / sampleRate
         }
@@ -118,12 +119,12 @@ public func - (left: AVAudioTime, right: Int) -> AVAudioTime {
     left.offset(seconds: TimeInterval(-right))
 }
 
-private extension UInt64 {
-    func safeSubtract(_ other: UInt64) -> Int64 {
+extension UInt64 {
+    fileprivate func safeSubtract(_ other: UInt64) -> Int64 {
         self > other ? Int64(self - other) : -Int64(other - self)
     }
 
-    static func + (left: UInt64, right: Double) -> UInt64 {
+    fileprivate static func + (left: UInt64, right: Double) -> UInt64 {
         right >= 0 ? left + UInt64(right) : left - UInt64(-right)
     }
 }

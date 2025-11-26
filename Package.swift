@@ -14,8 +14,6 @@ private let platforms: [PackageDescription.SupportedPlatform]? = [
 ]
 
 let remoteDependencies: [RemoteDependency] = [
-    .init(package: .package(url: "https://github.com/orchetect/OTAtomics", branch: "main"),
-          product: .product(name: "OTAtomics", package: "OTAtomics")),
     .init(package: .package(url: "https://github.com/tadija/AEXML", from: "4.6.0"),
           product: .product(name: "AEXML", package: "AEXML")),
     .init(package: .package(url: "https://github.com/rnine/Checksum", branch: "master"),

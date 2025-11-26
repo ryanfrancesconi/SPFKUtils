@@ -3,7 +3,7 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
     import AppKit
     import Foundation
-    import OTCore
+    import SwiftExtensions
 
     public enum FileSystem {
         // MARK: - File size calculations

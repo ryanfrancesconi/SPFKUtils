@@ -1,12 +1,12 @@
 import Foundation
-import OTCore
+import SwiftExtensions
 import SPFKBase
 
 extension String {
     /// Retains only ASCII alphanumerics, `+`, `-`, and `_`
     public func onlyASCIIAlphanumericsPlusMinusUnderscore() -> String {
         let okayChars = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLKMNOPQRSTUVWXYZ1234567890+-_"
-        return only(characters: okayChars)
+        return only(charactersIn: okayChars)
     }
 
     /// Translate U+00A0 NO-BREAK SPACE to standard " "

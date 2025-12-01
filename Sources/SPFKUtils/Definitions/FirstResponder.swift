@@ -8,7 +8,7 @@ import AppKit
 /// `FirstResponder.send(action: .showHelp)`
 public class FirstResponder {
     /// A subset of general responder actions which are handled by this class
-    public enum Action: Equatable {
+    public enum Action: Equatable, Sendable {
         case orderFrontStandardAboutPanel
         case hide
         case openDocument

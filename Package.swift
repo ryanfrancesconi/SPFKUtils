@@ -7,7 +7,7 @@ private let name: String = "SPFKUtils" // Swift target
 private let dependencyNames: [String] = ["SPFKBase", "SPFKTesting"]
 private let dependencyNamesC: [String] = []
 private let dependencyBranch: String = "development"
-private let useLocalDependencies: Bool = false
+
 private let platforms: [PackageDescription.SupportedPlatform]? = [
     .macOS(.v12),
     .iOS(.v15),
@@ -37,21 +37,14 @@ private let products: [PackageDescription.Product] = [
     .library(name: name, targets: [name, nameC]),
 ]
 
-private var packageDependencies: [PackageDescription.Package.Dependency] {
-    let local: [PackageDescription.Package.Dependency] =
-        dependencyNames.map {
-            .package(name: "\($0)", path: "../\($0)")
-        }
-
-    let remote: [PackageDescription.Package.Dependency] =
+private let packageDependencies: [PackageDescription.Package.Dependency] = {
+    let value: [PackageDescription.Package.Dependency] =
         dependencyNames.map {
             .package(url: "\(githubBase)/\($0)", branch: dependencyBranch)
         }
 
-    var value = useLocalDependencies ? local : remote
-    value.append(contentsOf: remoteDependencies.map { $0.package })
-    return value
-}
+    return value + remoteDependencies.map(\.package)
+}()
 
 private var swiftTargetDependencies: [PackageDescription.Target.Dependency] {
     let names = dependencyNames.filter { $0 != "SPFKTesting" }
@@ -61,7 +54,7 @@ private var swiftTargetDependencies: [PackageDescription.Target.Dependency] {
     }
 
     value.append(.target(name: nameC))
-    value.append(contentsOf: remoteDependencies.map { $0.product })
+    value.append(contentsOf: remoteDependencies.map(\.product))
     return value
 }
 

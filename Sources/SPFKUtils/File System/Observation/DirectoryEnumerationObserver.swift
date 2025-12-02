@@ -2,20 +2,16 @@
 
 #if os(macOS)
     import Foundation
+    import SPFKBase
 
     /// Observe this directory url and all its subdirectory children by sending a common event.
     ///
     /// Be careful with this class and only establish on known directories as it will perform
     /// a deep enumeration.
-    public final class DirectoryEnumerationObserver: @unchecked Sendable {
+    public final class DirectoryEnumerationObserver: Sendable {
         public let url: URL
         public let delegate: DirectoryEnumerationObserverDelegate
-
-        public let observers = ObservationData()
-
-        private var eventQueue: Set<DirectoryEvent> = .init()
-
-        var eventTask: Task<Void, Error>?
+        let storage: ObservationData = ObservationData()
 
         public init(url: URL, delegate: DirectoryEnumerationObserverDelegate) throws {
             guard url.isDirectory else {
@@ -31,18 +27,16 @@
         }
 
         public func start() async throws {
-            guard await !observers.isObserving else { return }
+            guard await !storage.isObserving else { return }
 
+            await storage.update(delegate: self)
             await stop()
             try await collectChildDirectoriesAndStartObservation()
         }
 
         public func stop() async {
-            guard await observers.isObserving else { return }
-            await observers.removeAll()
-            eventQueue.removeAll()
-            eventTask?.cancel()
-            eventTask = nil
+            guard await storage.isObserving else { return }
+            await storage.removeAll()
         }
 
         private func collectChildDirectoriesAndStartObservation() async throws {
@@ -57,24 +51,7 @@
                 observer.delegate = self
                 try observer.start()
 
-                await observers.insert(observer)
-            }
-        }
-
-        private func queue(event: DirectoryEvent) async {
-            if !eventQueue.contains(event) {
-                eventQueue.insert(event)
-            }
-
-            eventTask?.cancel()
-            eventTask = Task { [weak self] in
-                guard let self else { return }
-
-                try await Task.sleep(seconds: 1)
-                try Task.checkCancellation()
-
-                try await self.delegate.directoryUpdated(events: self.eventQueue)
-                self.eventQueue.removeAll()
+                await storage.insert(observer)
             }
         }
     }
@@ -91,7 +68,6 @@
         public func handleObservation(event: DirectoryEvent) async {
             switch event {
             case let .new(files: urls, source: source):
-
                 Log.debug("new", "source:", source, "urls", urls)
 
                 if source == url {
@@ -106,11 +82,18 @@
                 Log.debug("removed", "source:", source, "urls", urls)
 
                 if source == url {
-                    await observers.remove(urls: urls)
+                    await storage.remove(urls: urls)
                 }
             }
 
-            await queue(event: event)
+            await storage.queue(event: event)
         }
     }
+
+    extension DirectoryEnumerationObserver: DirectoryEnumerationObserverDelegate {
+        public func directoryUpdated(events: Set<DirectoryEvent>) async throws {
+            try await delegate.directoryUpdated(events: events)
+        }
+    }
+
 #endif

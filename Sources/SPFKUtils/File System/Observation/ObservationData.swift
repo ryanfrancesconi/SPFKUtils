@@ -2,26 +2,33 @@
 
 import Foundation
 
-public actor ObservationData {
+actor ObservationData {
     var observers = Set<DirectoryObserver>()
 
     var observedDirectories: Set<URL> {
-        Set<URL>(observers.map { $0.url })
+        Set<URL>(observers.map(\.url))
     }
 
-    public var isObserving: Bool { observers.isNotEmpty }
+    var isObserving: Bool { observers.isNotEmpty }
 
-    init() {}
+    private var eventQueue: Set<DirectoryEvent> = .init()
+    var eventTask: Task<Void, Error>?
 
-    public func insert(_ observer: DirectoryObserver) {
+    var delegate: DirectoryEnumerationObserverDelegate?
+
+    func update(delegate: DirectoryEnumerationObserverDelegate) {
+        self.delegate = delegate
+    }
+
+    func insert(_ observer: DirectoryObserver) {
         observers.insert(observer)
     }
 
-    public func remove(urls: Set<URL>) {
-        observers.forEach {
-            if urls.contains($0.url) {
-                $0.stop()
-                $0.delegate = nil
+    func remove(urls: Set<URL>) {
+        for observer in observers {
+            if urls.contains(observer.url) {
+                observer.stop()
+                observer.delegate = nil
             }
         }
 
@@ -30,12 +37,38 @@ public actor ObservationData {
         }
     }
 
-    public func removeAll() {
-        observers.forEach {
-            $0.stop()
-            $0.delegate = nil
+    func removeAll() {
+        for observer in observers {
+            observer.stop()
+            observer.delegate = nil
         }
 
         observers.removeAll()
+
+        disposeQueue()
+    }
+
+    func disposeQueue() {
+        eventQueue.removeAll()
+        eventTask?.cancel()
+        eventTask = nil
+    }
+
+    func queue(event: DirectoryEvent) {
+        if !eventQueue.contains(event) {
+            eventQueue.insert(event)
+        }
+
+        eventTask?.cancel()
+        eventTask = Task { [weak self] in
+            guard let self else { return }
+
+            try await Task.sleep(seconds: 1)
+            try Task.checkCancellation()
+
+            try await delegate?.directoryUpdated(events: eventQueue)
+
+            await disposeQueue()
+        }
     }
 }

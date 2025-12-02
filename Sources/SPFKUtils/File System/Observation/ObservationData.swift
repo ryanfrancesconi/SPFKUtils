@@ -1,6 +1,7 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKUtils
 
 import Foundation
+import SPFKBase
 
 actor ObservationData {
     var observers = Set<DirectoryObserver>()
@@ -12,19 +13,93 @@ actor ObservationData {
     var isObserving: Bool { observers.isNotEmpty }
 
     private var eventQueue: Set<DirectoryEvent> = .init()
-    var eventTask: Task<Void, Error>?
+    private var eventTask: Task<Void, Error>?
 
     var delegate: DirectoryEnumerationObserverDelegate?
 
-    func update(delegate: DirectoryEnumerationObserverDelegate) {
-        self.delegate = delegate
+    let url: URL
+
+    init(url: URL) throws {
+        guard url.isDirectory else {
+            throw NSError(description: "URL must be a directory")
+        }
+        
+        self.url = url
     }
 
-    func insert(_ observer: DirectoryObserver) {
+    func update(delegate: DirectoryEnumerationObserverDelegate?) {
+        self.delegate = delegate
+    }
+}
+
+extension ObservationData {
+    func start() async throws {
+        let allDirectories = Set<URL>([url] + FileSystem.getDirectories(in: url, recursive: true))
+
+        try await startFileObservation(for: allDirectories)
+    }
+
+    private func startFileObservation(for urls: Set<URL>) async throws {
+        for url in urls where url.isDirectory {
+            let observer = try DirectoryObserver(url: url)
+            observer.delegate = self
+            try observer.start()
+
+            insert(observer)
+        }
+    }
+
+    func stop() {
+        for observer in observers {
+            observer.stop()
+            observer.delegate = nil
+        }
+
+        observers.removeAll()
+        disposeQueue()
+    }
+
+    private func disposeQueue() {
+        eventQueue.removeAll()
+        eventTask?.cancel()
+        eventTask = nil
+    }
+}
+
+// MARK: - Event Handlers
+
+extension ObservationData: DirectoryObserverDelegate {
+    func handleObservation(event: DirectoryEvent) async {
+        switch event {
+        case let .new(files: urls, source: source):
+            Log.debug("new", "source:", source, "urls", urls)
+
+            if source == url {
+                do {
+                    try await startFileObservation(for: urls)
+                } catch {
+                    Log.error(error)
+                }
+            }
+
+        case let .removed(files: urls, source: source):
+            Log.debug("removed", "source:", source, "urls", urls)
+
+            if source == url {
+                remove(urls: urls)
+            }
+        }
+
+        queue(event: event)
+    }
+}
+
+extension ObservationData {
+    private func insert(_ observer: DirectoryObserver) {
         observers.insert(observer)
     }
 
-    func remove(urls: Set<URL>) {
+    private func remove(urls: Set<URL>) {
         for observer in observers {
             if urls.contains(observer.url) {
                 observer.stop()
@@ -37,24 +112,7 @@ actor ObservationData {
         }
     }
 
-    func removeAll() {
-        for observer in observers {
-            observer.stop()
-            observer.delegate = nil
-        }
-
-        observers.removeAll()
-
-        disposeQueue()
-    }
-
-    func disposeQueue() {
-        eventQueue.removeAll()
-        eventTask?.cancel()
-        eventTask = nil
-    }
-
-    func queue(event: DirectoryEvent) {
+    private func queue(event: DirectoryEvent) {
         if !eventQueue.contains(event) {
             eventQueue.insert(event)
         }

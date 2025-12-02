@@ -8,28 +8,28 @@ public enum DirectoryEvent: Hashable, Sendable {
 
     public var isNew: Bool {
         switch self {
-        case .new: return true
-        case .removed: return false
+        case .new: true
+        case .removed: false
         }
     }
 
     public var source: URL {
         switch self {
         case let .new(files: _, source: source):
-            return source
+            source
 
         case let .removed(files: _, source: source):
-            return source
+            source
         }
     }
 
     public var files: Set<URL> {
         switch self {
         case let .new(files: files, source: _):
-            return files
+            files
 
         case let .removed(files: files, source: _):
-            return files
+            files
         }
     }
 }

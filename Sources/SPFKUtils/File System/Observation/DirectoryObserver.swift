@@ -3,25 +3,7 @@
 import Dispatch
 import Foundation
 
-extension DirectoryObserver: Equatable {
-    public static func == (lhs: DirectoryObserver, rhs: DirectoryObserver) -> Bool {
-        lhs.url == rhs.url
-    }
-}
-
-extension DirectoryObserver: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(url)
-    }
-}
-
-extension DirectoryObserver: CustomStringConvertible {
-    public var description: String {
-        "DirectoryObserver(url: \"\(url.path)\")"
-    }
-}
-
-public final class DirectoryObserver: @unchecked Sendable {
+final class DirectoryObserver: @unchecked Sendable {
     static let retryCount: Int = 3
     static let pollInterval: TimeInterval = 0.5
 
@@ -31,16 +13,16 @@ public final class DirectoryObserver: @unchecked Sendable {
     private var directoryChanged = false
     private var previousContents: Set<URL>?
 
-    public weak var delegate: DirectoryObserverDelegate?
+    weak var delegate: DirectoryObserverDelegate?
 
-    public let url: URL
-    public let eventMask: DispatchSource.FileSystemEvent
+    let url: URL
+    let eventMask: DispatchSource.FileSystemEvent
 
     var eventTask: Task<Void, Error>?
 
-    public var isWatching: Bool { source != nil }
+    var isWatching: Bool { source != nil }
 
-    public init(url: URL, eventMask: DispatchSource.FileSystemEvent = [.write, .delete, .rename]) throws {
+    init(url: URL, eventMask: DispatchSource.FileSystemEvent = [.write, .delete, .rename]) throws {
         guard url.isDirectory else {
             throw NSError(description: "URL must be a directory")
         }
@@ -55,7 +37,7 @@ public final class DirectoryObserver: @unchecked Sendable {
         stop()
     }
 
-    public func start() throws {
+    func start() throws {
         guard !isWatching else { return }
 
         // descriptor requested for event notifications only
@@ -70,7 +52,7 @@ public final class DirectoryObserver: @unchecked Sendable {
         source = DispatchSource.makeFileSystemObjectSource(
             fileDescriptor: descriptor,
             eventMask: eventMask, // actions to monitor
-            queue: queue
+            queue: DispatchQueue.global(qos: .background)
         )
 
         source?.setEventHandler { [weak self] in
@@ -84,8 +66,9 @@ public final class DirectoryObserver: @unchecked Sendable {
         source?.resume()
     }
 
-    public func stop() {
+    func stop() {
         guard isWatching else { return }
+
         source?.cancel()
         source?.setEventHandler(handler: nil)
         source?.setCancelHandler(handler: nil)
@@ -137,7 +120,8 @@ extension DirectoryObserver {
 
     private func checkChanges(after delay: TimeInterval) {
         guard let directoryMetadata = try? directoryMetadata(url: url),
-              let queue else {
+              let queue
+        else {
             return
         }
 
@@ -161,7 +145,7 @@ extension DirectoryObserver {
 
         retriesLeft = retriesLeft - 1
 
-        if directoryChanged || 0 < retriesLeft {
+        if directoryChanged || retriesLeft > 0 {
             // Either the directory is changing or
             // we should try again as more changes may occur
             checkChanges(after: DirectoryObserver.pollInterval)
@@ -198,5 +182,23 @@ extension DirectoryObserver {
                 .new(files: newElements, source: url)
             )
         }
+    }
+}
+
+extension DirectoryObserver: Equatable {
+    static func == (lhs: DirectoryObserver, rhs: DirectoryObserver) -> Bool {
+        lhs.url == rhs.url
+    }
+}
+
+extension DirectoryObserver: Hashable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(url)
+    }
+}
+
+extension DirectoryObserver: CustomStringConvertible {
+    var description: String {
+        "DirectoryObserver(url: \"\(url.path)\")"
     }
 }

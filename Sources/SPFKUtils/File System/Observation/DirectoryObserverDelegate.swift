@@ -2,6 +2,6 @@
 
 import Foundation
 
-public protocol DirectoryObserverDelegate: AnyObject {
+protocol DirectoryObserverDelegate: AnyObject {
     func handleObservation(event: DirectoryEvent) async
 }

@@ -11,12 +11,11 @@
     public final class DirectoryEnumerationObserver: Sendable {
         public let url: URL
         public let delegate: DirectoryEnumerationObserverDelegate
-        let storage: ObservationData = ObservationData()
+
+        let storage: ObservationData
 
         public init(url: URL, delegate: DirectoryEnumerationObserverDelegate) throws {
-            guard url.isDirectory else {
-                throw NSError(description: "URL must be a directory")
-            }
+            storage = try ObservationData(url: url)
 
             self.url = url
             self.delegate = delegate
@@ -29,64 +28,21 @@
         public func start() async throws {
             guard await !storage.isObserving else { return }
 
-            await storage.update(delegate: self)
             await stop()
-            try await collectChildDirectoriesAndStartObservation()
+            try await storage.start()
+            await storage.update(delegate: self)
         }
 
         public func stop() async {
             guard await storage.isObserving else { return }
-            await storage.removeAll()
-        }
-
-        private func collectChildDirectoriesAndStartObservation() async throws {
-            let allDirectories = Set<URL>([url] + FileSystem.getDirectories(in: url, recursive: true))
-
-            try await startFileObservation(for: allDirectories)
-        }
-
-        private func startFileObservation(for urls: Set<URL>) async throws {
-            for url in urls where url.isDirectory {
-                let observer = try DirectoryObserver(url: url)
-                observer.delegate = self
-                try observer.start()
-
-                await storage.insert(observer)
-            }
+            await storage.update(delegate: nil)
+            await storage.stop()
         }
     }
 
     extension DirectoryEnumerationObserver: CustomStringConvertible {
         public var description: String {
             "DirectoryEnumerationObserver(url: \"\(url.path)\")"
-        }
-    }
-
-    // MARK: - Event Handlers
-
-    extension DirectoryEnumerationObserver: DirectoryObserverDelegate {
-        public func handleObservation(event: DirectoryEvent) async {
-            switch event {
-            case let .new(files: urls, source: source):
-                Log.debug("new", "source:", source, "urls", urls)
-
-                if source == url {
-                    do {
-                        try await startFileObservation(for: urls)
-                    } catch {
-                        Log.error(error)
-                    }
-                }
-
-            case let .removed(files: urls, source: source):
-                Log.debug("removed", "source:", source, "urls", urls)
-
-                if source == url {
-                    await storage.remove(urls: urls)
-                }
-            }
-
-            await storage.queue(event: event)
         }
     }
 

@@ -7,22 +7,22 @@ final class DirectoryObserver: @unchecked Sendable {
     static let retryCount: Int = 3
     static let pollInterval: TimeInterval = 0.5
 
+    weak var delegate: DirectoryObserverDelegate?
+
+    let url: URL
+
+    private let eventMask: DispatchSource.FileSystemEvent
+
+    private var eventTask: Task<Void, Error>?
+    private var isWatching: Bool { source != nil }
+
     private var source: DispatchSourceFileSystemObject?
-    private var queue: DispatchQueue?
+    private var queue: DispatchQueue = DispatchQueue.global(qos: .background)
     private var retriesLeft: Int = 0
     private var directoryChanged = false
     private var previousContents: Set<URL>?
 
-    weak var delegate: DirectoryObserverDelegate?
-
-    let url: URL
-    let eventMask: DispatchSource.FileSystemEvent
-
-    var eventTask: Task<Void, Error>?
-
-    var isWatching: Bool { source != nil }
-
-    init(url: URL, eventMask: DispatchSource.FileSystemEvent = [.write, .delete, .rename]) throws {
+    init(url: URL, eventMask: DispatchSource.FileSystemEvent = .all) throws {
         guard url.isDirectory else {
             throw NSError(description: "URL must be a directory")
         }
@@ -52,7 +52,7 @@ final class DirectoryObserver: @unchecked Sendable {
         source = DispatchSource.makeFileSystemObjectSource(
             fileDescriptor: descriptor,
             eventMask: eventMask, // actions to monitor
-            queue: DispatchQueue.global(qos: .background)
+            queue: queue
         )
 
         source?.setEventHandler { [weak self] in
@@ -81,6 +81,8 @@ final class DirectoryObserver: @unchecked Sendable {
 extension DirectoryObserver {
     private func directoryDidChange() {
         guard !directoryChanged else { return }
+
+        Log.debug("* change detected for \(url.path)")
 
         directoryChanged = true
         retriesLeft = DirectoryObserver.retryCount
@@ -119,8 +121,7 @@ extension DirectoryObserver {
     }
 
     private func checkChanges(after delay: TimeInterval) {
-        guard let directoryMetadata = try? directoryMetadata(url: url),
-              let queue
+        guard let directoryMetadata = try? directoryMetadata(url: url)
         else {
             return
         }
@@ -140,7 +141,7 @@ extension DirectoryObserver {
         directoryChanged = newDirectoryMetadata != oldMetadata
 
         retriesLeft = directoryChanged
-            ? DirectoryObserver.retryCount
+            ? Self.retryCount
             : retriesLeft
 
         retriesLeft = retriesLeft - 1
@@ -148,7 +149,7 @@ extension DirectoryObserver {
         if directoryChanged || retriesLeft > 0 {
             // Either the directory is changing or
             // we should try again as more changes may occur
-            checkChanges(after: DirectoryObserver.pollInterval)
+            checkChanges(after: Self.pollInterval)
 
         } else {
             // Changes appear to be completed

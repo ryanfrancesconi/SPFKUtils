@@ -32,6 +32,10 @@ let package = Package(
             dependencies: [
                 .product(name: "SPFKBase", package: "spfk-base"),
                 .product(name: "SPFKTesting", package: "spfk-testing"),
+
+                .product(name: "AEXML", package: "AEXML"),
+                .product(name: "Checksum", package: "Checksum"),
+                .product(name: "XAttr", package: "swift-xattr"),
             ]
         ),
         .testTarget(

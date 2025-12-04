@@ -44,5 +44,6 @@ let package = Package(
                 "SPFKUtils",
             ]
         ),
-    ]
+    ],
+    cxxLanguageStandard: .cxx20
 )

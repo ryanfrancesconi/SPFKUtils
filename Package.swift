@@ -31,7 +31,6 @@ let package = Package(
             name: "SPFKUtils",
             dependencies: [
                 .product(name: "SPFKBase", package: "spfk-base"),
-                .product(name: "SPFKTesting", package: "spfk-testing"),
 
                 .product(name: "AEXML", package: "AEXML"),
                 .product(name: "Checksum", package: "Checksum"),

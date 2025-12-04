@@ -42,6 +42,7 @@ let package = Package(
             name: "SPFKUtilsTests",
             dependencies: [
                 "SPFKUtils",
+                .product(name: "SPFKTesting", package: "spfk-testing"),
             ]
         ),
     ],

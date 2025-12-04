@@ -3,13 +3,13 @@
 import Dispatch
 import Foundation
 
-final class DirectoryObserver: @unchecked Sendable {
+public final class DirectoryObserver: @unchecked Sendable {
     static let retryCount: Int = 3
     static let pollInterval: TimeInterval = 0.5
 
-    weak var delegate: DirectoryObserverDelegate?
+    public weak var delegate: DirectoryObserverDelegate?
 
-    let url: URL
+    public let url: URL
 
     private let eventMask: DispatchSource.FileSystemEvent
 
@@ -22,7 +22,7 @@ final class DirectoryObserver: @unchecked Sendable {
     private var directoryChanged = false
     private var previousContents: Set<URL>?
 
-    init(url: URL, eventMask: DispatchSource.FileSystemEvent = .all) throws {
+    public init(url: URL, eventMask: DispatchSource.FileSystemEvent = .all) throws {
         guard url.isDirectory else {
             throw NSError(description: "URL must be a directory")
         }
@@ -37,7 +37,7 @@ final class DirectoryObserver: @unchecked Sendable {
         stop()
     }
 
-    func start() throws {
+    public func start() throws {
         guard !isWatching else { return }
 
         // descriptor requested for event notifications only
@@ -66,7 +66,7 @@ final class DirectoryObserver: @unchecked Sendable {
         source?.resume()
     }
 
-    func stop() {
+    public func stop() {
         guard isWatching else { return }
 
         source?.cancel()
@@ -187,19 +187,19 @@ extension DirectoryObserver {
 }
 
 extension DirectoryObserver: Equatable {
-    static func == (lhs: DirectoryObserver, rhs: DirectoryObserver) -> Bool {
+    public static func == (lhs: DirectoryObserver, rhs: DirectoryObserver) -> Bool {
         lhs.url == rhs.url
     }
 }
 
 extension DirectoryObserver: Hashable {
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(url)
     }
 }
 
 extension DirectoryObserver: CustomStringConvertible {
-    var description: String {
+    public var description: String {
         "DirectoryObserver(url: \"\(url.path)\")"
     }
 }

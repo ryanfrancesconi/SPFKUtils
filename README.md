@@ -1,6 +1,6 @@
 # SPFKUtils
 
-Swift macOS utilities and extensions.
+Swift utilities and extensions.
 
 ## About
 

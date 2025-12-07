@@ -13,7 +13,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/ryanfrancesconi/spfk-base", branch: "development"),
+        .package(url: "https://github.com/ryanfrancesconi/spfk-audio-base", branch: "development"),
         .package(url: "https://github.com/ryanfrancesconi/spfk-testing", branch: "development"),
         .package(url: "https://github.com/tadija/AEXML", from: "4.6.0"),
         .package(url: "https://github.com/rnine/Checksum", from: "1.0.2"),
@@ -23,7 +23,7 @@ let package = Package(
         .target(
             name: "SPFKUtils",
             dependencies: [
-                .product(name: "SPFKBase", package: "spfk-base"),
+                .product(name: "SPFKAudioBase", package: "spfk-audio-base"),
                 .product(name: "AEXML", package: "AEXML"),
                 .product(name: "Checksum", package: "Checksum"),
                 .product(name: "XAttr", package: "swift-xattr"),

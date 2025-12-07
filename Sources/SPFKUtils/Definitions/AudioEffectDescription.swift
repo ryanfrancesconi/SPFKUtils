@@ -1,8 +1,9 @@
-// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKAudio
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/spfk-audio
 
 import AEXML
 import AudioToolbox
 import Foundation
+import SPFKAudioBase
 
 public struct AudioEffectDescription: Equatable {
     public static func == (

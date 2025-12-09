@@ -3,7 +3,7 @@
     import AppKit
     import CoreGraphics
 
-    public struct HexColor: Hashable, Codable {
+    public struct HexColor: Hashable, Codable, Sendable {
         public private(set) var hexString: String
 
         public var nsColor: NSColor? {

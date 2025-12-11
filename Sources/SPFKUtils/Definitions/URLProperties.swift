@@ -15,9 +15,9 @@
 
         public init(url: URL) {
             self.url = url
-            self.finderTags = FinderTagGroup(url: url)
-            self.creationDate = url.creationDate
-            self.modificationDate = url.modificationDate
+            finderTags = FinderTagGroup(url: url)
+            creationDate = url.creationDate
+            modificationDate = url.modificationDate
 
             fileSize = url.regularFileAllocatedSize
 
@@ -25,9 +25,9 @@
                 fileSizeString = FileSystem.byteCountToString(fileSize.int64)
             }
         }
-
-        public mutating func refresh() {
-            self = URLProperties(url: url)
-        }
     }
+
+
+
+
 #endif

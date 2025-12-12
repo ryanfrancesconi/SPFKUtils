@@ -12,6 +12,7 @@ public class FirstResponder {
         case orderFrontStandardAboutPanel
         case hide
         case openDocument
+        case saveDocument
         case undo
         case redo
         case cut
@@ -38,6 +39,8 @@ public class FirstResponder {
             send(selector: #selector(orderFrontStandardAboutPanel(_:)))
         case .openDocument:
             send(selector: #selector(openDocument(_:)))
+        case .saveDocument:
+            send(selector: #selector(saveDocument(_:)))
         case .hide:
             send(selector: #selector(hide(_:)))
         case .undo:
@@ -103,6 +106,7 @@ fileprivate extension FirstResponder {
     // MARK: - File
 
     @objc static func openDocument(_ sender: Any) {}
+    @objc static func saveDocument(_ sender: Any) {}
 
     // MARK: - Edit
 

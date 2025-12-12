@@ -42,14 +42,16 @@
 
             active.insert(url)
 
+            Log.debug("Accessing", url.path)
+
             return url
         }
 
         public func releaseAll() {
             Log.debug("Releasing", active.count, "security scoped urls,", stale.count, "stale")
 
-            active.forEach {
-                $0.stopAccessingSecurityScopedResource()
+            for item in active {
+                item.stopAccessingSecurityScopedResource()
             }
 
             active.removeAll()

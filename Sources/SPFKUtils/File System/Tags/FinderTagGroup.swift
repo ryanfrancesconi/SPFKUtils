@@ -14,6 +14,7 @@
             )
         )
 
+        // codable
         public var tags: Set<FinderTagDescription> = .init()
 
         public var stringValue: String {

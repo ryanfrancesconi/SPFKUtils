@@ -1,7 +1,7 @@
 #if os(macOS)
     import Foundation
 
-    public struct URLProperties: Hashable, Codable, Sendable {
+    public struct URLProperties: Hashable, Sendable {
         public private(set) var url: URL
         public var finderTags: FinderTagGroup
         public private(set) var creationDate: Date?
@@ -26,8 +26,5 @@
             }
         }
     }
-
-
-
 
 #endif

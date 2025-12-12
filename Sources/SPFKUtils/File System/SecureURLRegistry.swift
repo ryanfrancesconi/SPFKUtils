@@ -1,17 +1,18 @@
-#if os(macOS)
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/spfk-utils
+
+#if os(macOS) && !targetEnvironment(macCatalyst)
     import Foundation
 
     /// A centralized place to store URL access to simplify matching start access with stop
     public actor SecureURLRegistry {
-        public static let shared = SecureURLRegistry()
-        private init() {}
+        public init() {}
 
         public private(set) var active = Set<URL>()
         public private(set) var stale = Set<URL>()
         public private(set) var errors = Set<URL>()
 
         @discardableResult
-        public func create(resolvingBookmarkData data: Data) throws -> URL {
+        public func create(resolvingBookmarkData data: Data) throws -> (url: URL, isStale: Bool) {
             var isStale = false
 
             let url = try URL(
@@ -20,20 +21,15 @@
                 bookmarkDataIsStale: &isStale
             )
 
-            guard !isStale else {
+            if isStale {
+                Log.error("bookmark for \(url.path) is stale")
                 stale.insert(url)
-
-                throw NSError(
-                    domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, description: "File at \(url.path) isn't accessible."
-                )
             }
 
             guard url.startAccessingSecurityScopedResource() else {
                 errors.insert(url)
 
                 let message = "startAccessingSecurityScopedResource failed for \(url.path)"
-
-                assertionFailure(message)
 
                 throw NSError(
                     domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, description: message
@@ -42,9 +38,9 @@
 
             active.insert(url)
 
-            Log.debug("Accessing", url.path)
+            // Log.debug("Accessing", url.path)
 
-            return url
+            return (url: url, isStale: isStale)
         }
 
         public func releaseAll() {

@@ -68,6 +68,7 @@ extension CGImage {
 
         context.interpolationQuality = .high
 
+        // [Internal] Thread running at User-initiated quality-of-service class waiting on a thread without a QoS class specified (base priority 0). Investigate ways to avoid priority inversions
         context.draw(
             self,
             in: CGRect(x: 0, y: 0, width: width, height: height)
@@ -98,7 +99,7 @@ extension CGImage {
         utType: UTType,
         dpi: CGFloat = 72,
         compression: CGFloat? = nil,
-        excludeGPSData: Bool = false,
+        excludeGPSData: Bool = true,
         otherOptions: [String: Any]? = nil
     ) throws -> Data {
         // Make sure that the DPI level is at least somewhat sane
@@ -136,6 +137,9 @@ extension CGImage {
         }
 
         CGImageDestinationAddImage(destination, self, options as CFDictionary)
+        
+        // [Internal] Thread running at User-initiated quality-of-service class waiting on a thread without a QoS class specified (base priority 0). Investigate ways to avoid priority inversions
+        
         CGImageDestinationFinalize(destination)
 
         let resultData = mutableData as Data

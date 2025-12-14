@@ -37,7 +37,7 @@
             #expect(cgImage.width == 1024)
             #expect(cgImage.height == 1024)
 
-            let scaledImage = try #require(cgImage.scaled(to: CGSize(square: 32)))
+            let scaledImage = try #require(cgImage.scaled(to: CGSize(equal: 32)))
 
             #expect(scaledImage.width == 32)
             #expect(scaledImage.height == 32)

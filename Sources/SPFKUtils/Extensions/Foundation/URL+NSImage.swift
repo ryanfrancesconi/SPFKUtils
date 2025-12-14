@@ -13,7 +13,7 @@ extension URL {
     @_disfavoredOverload public var bestImageRepresentation: NSImage? {
         guard isFileURL, exists else { return nil }
 
-        let size = NSSize(square: 1024)
+        let size = NSSize(equal: 1024)
 
         guard let rep = NSWorkspace.shared.icon(
             forFile: path

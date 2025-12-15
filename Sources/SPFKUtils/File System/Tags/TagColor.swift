@@ -29,14 +29,14 @@
         /// which would be disallowed on a sandboxed app.
         public var dataElement: String {
             switch self {
-            case .none:     return ""           // 0
-            case .gray:     return "Gray\n1"    // 1
-            case .green:    return "Green\n2"   // 2
-            case .purple:   return "Purple\n3"  // 3
-            case .blue:     return "Blue\n4"    // 4
-            case .yellow:   return "Yellow\n5"  // 5
-            case .red:      return "Red\n6"     // 6
-            case .orange:   return "Orange\n7"  // 7
+            case .none:     ""           // 0
+            case .gray:     "Gray\n1"    // 1
+            case .green:    "Green\n2"   // 2
+            case .purple:   "Purple\n3"  // 3
+            case .blue:     "Blue\n4"    // 4
+            case .yellow:   "Yellow\n5"  // 5
+            case .red:      "Red\n6"     // 6
+            case .orange:   "Orange\n7"  // 7
             }
         }
 
@@ -52,14 +52,14 @@
         /// `defaults read com.apple.Finder FavoriteTagNames`
         public var name: String {
             switch self {
-            case .none:     return "None"       // 0
-            case .gray:     return "Gray"       // 1
-            case .green:    return "Green"      // 2
-            case .purple:   return "Purple"     // 3
-            case .blue:     return "Blue"       // 4
-            case .yellow:   return "Yellow"     // 5
-            case .red:      return "Red"        // 6
-            case .orange:   return "Orange"     // 7
+            case .none:     "None"       // 0
+            case .gray:     "Gray"       // 1
+            case .green:    "Green"      // 2
+            case .purple:   "Purple"     // 3
+            case .blue:     "Blue"       // 4
+            case .yellow:   "Yellow"     // 5
+            case .red:      "Red"        // 6
+            case .orange:   "Orange"     // 7
             }
         }
 
@@ -113,14 +113,14 @@
         }()
     }
 
-    extension Array where Element == TagColor {
+    extension [TagColor] {
         public func propertyListData() throws -> Data {
-            let labels: [String] = self.map { $0.dataElement }
+            let labels: [String] = map(\.dataElement)
             return try labels.propertyListData()
         }
     }
 
-    extension Array where Element == String {
+    extension [String] {
         public func propertyListData() throws -> Data {
             try PropertyListSerialization.data(
                 fromPropertyList: self,

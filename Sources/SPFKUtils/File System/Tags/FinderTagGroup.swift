@@ -5,7 +5,7 @@
     import Foundation
 
     /// Describes the tags found and set by the finder such as colored labels
-    public struct FinderTagGroup: Hashable, Codable, Sendable {
+    public struct FinderTagGroup: Hashable, Sendable {
         public static let defaultTags: FinderTagGroup = .init(
             tags: Set(
                 TagColor.allCases.map {
@@ -18,11 +18,9 @@
         public var tags: Set<FinderTagDescription> = .init()
 
         public var stringValue: String {
-            tags.map {
-                $0.label
-            }
-            .sorted()
-            .joined(separator: ", ")
+            tags.map(\.label)
+                .sorted()
+                .joined(separator: ", ")
         }
 
         public var defaultColor: NSColor? {
@@ -41,9 +39,7 @@
             tags.filter {
                 $0.tagColor != .none
             }
-            .map {
-                $0.tagColor
-            }
+            .map(\.tagColor)
         }
 
         public init() {}
@@ -57,10 +53,28 @@
         }
 
         public mutating func insert(colors: Set<FinderTagDescription>) {
-            self.tags = self.tags.filter { $0.tagColor == .none }
+            tags = tags.filter { $0.tagColor == .none }
             let colors = colors.filter { $0.tagColor != .none }
 
-            self.tags = self.tags.union(colors)
+            tags = tags.union(colors)
         }
     }
+
+    extension FinderTagGroup: Codable {
+        enum CodingKeys: String, CodingKey {
+            case tags
+        }
+
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            tags = try container.decode(Set<FinderTagDescription>.self, forKey: .tags)
+        }
+
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+
+            try container.encode(tags, forKey: .tags)
+        }
+    }
+
 #endif

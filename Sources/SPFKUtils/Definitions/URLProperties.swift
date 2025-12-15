@@ -15,15 +15,51 @@
 
         public init(url: URL) {
             self.url = url
-            finderTags = FinderTagGroup(url: url)
             creationDate = url.creationDate
             modificationDate = url.modificationDate
-
+            finderTags = FinderTagGroup(url: url)
             fileSize = url.regularFileAllocatedSize
 
+            initialize()
+        }
+
+        private mutating func initialize() {
             if let fileSize {
                 fileSizeString = FileSystem.byteCountToString(fileSize.int64)
             }
+        }
+    }
+
+    extension URLProperties: Codable {
+        enum CodingKeys: String, CodingKey {
+            case url
+            case finderTags
+            case creationDate
+            case modificationDate
+            case fileSize
+        }
+
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            url = try container.decode(URL.self, forKey: .url)
+            finderTags = try container.decode(FinderTagGroup.self, forKey: .finderTags)
+
+            creationDate = try? container.decodeIfPresent(Date.self, forKey: .creationDate)
+            modificationDate = try? container.decodeIfPresent(Date.self, forKey: .modificationDate)
+            fileSize = try? container.decodeIfPresent(UInt64.self, forKey: .fileSize)
+
+            initialize()
+        }
+
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+
+            try container.encode(url, forKey: .url)
+            try container.encode(finderTags, forKey: .finderTags)
+
+            try? container.encodeIfPresent(creationDate, forKey: .creationDate)
+            try? container.encodeIfPresent(modificationDate, forKey: .modificationDate)
+            try? container.encodeIfPresent(fileSize, forKey: .fileSize)
         }
     }
 

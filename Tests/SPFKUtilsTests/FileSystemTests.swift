@@ -61,7 +61,7 @@
             let size5 = try #require(
                 FileSystem.stringToByteCount("160.2 MB")
             )
-            #expect(size5 == 167981875)
+            #expect(size5 == 167_981_875)
 
             let size6 = try #require(
                 FileSystem.stringToByteCount("765.5 MB")
@@ -86,7 +86,7 @@
 
             let allDirs = FileSystem.getDirectories(in: bin, recursive: true)
 
-            Log.debug(allDirs.map { $0.path })
+            Log.debug(allDirs.map(\.path))
 
             #expect(allDirs.count == 2)
         }
@@ -124,5 +124,5 @@
                 #expect(next1.lastPathComponent == "folder_\(number)")
             }
         }
-    }
+     }
 #endif

@@ -1,0 +1,39 @@
+import Foundation
+
+open class ComponentColor {
+    public enum Key: CaseIterable {
+        case background
+        case text
+        case stroke
+    }
+
+    public var collection: [Key: SelectedColor] = {
+        var collection = [Key: SelectedColor]()
+
+        collection[.background] = SelectedColor(
+            selected: SPFKColor.controlActiveBackgroundColor.value(for: .dark),
+            unselected: SPFKColor.controlAlphaBackgroundColor.value(for: .dark)
+        )
+
+        collection[.text] = SelectedColor(
+            selected: SPFKColor.selectedTextColor.value(for: .dark),
+            unselected: SPFKColor.textColor.value(for: .dark)
+        )
+
+        collection[.stroke] = SelectedColor(
+            selected: .controlAccentColor,
+            unselected: .controlColor
+        )
+
+        return collection
+    }()
+
+    public subscript(key: Key) -> SelectedColor {
+        get { collection[key] ?? SelectedColor() }
+        set {
+            collection[key] = newValue
+        }
+    }
+
+    public init() {}
+}

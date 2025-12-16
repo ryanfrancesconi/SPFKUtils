@@ -4,7 +4,11 @@
     import Foundation
 
     /// Describes the tags found and set by the finder such as colored labels or custom strings
-    public struct FinderTagDescription: Hashable, Equatable, Sendable {
+    public struct FinderTagDescription: Hashable, Equatable, Sendable, Comparable {
+        public static func < (lhs: FinderTagDescription, rhs: FinderTagDescription) -> Bool {
+            lhs.label.standardCompare(with: rhs.label)
+        }
+
         public var tagColor: TagColor
         public var label: String
 

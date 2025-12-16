@@ -7,28 +7,23 @@
     /// Describes the tags found and set by the finder such as colored labels
     public struct FinderTagGroup: Hashable, Sendable {
         public static let defaultTags: FinderTagGroup = .init(
-            tags: Set(
-                TagColor.allCases.map {
-                    FinderTagDescription(tagColor: $0)
-                }
-            )
+            tags: TagColor.allCases.map {
+                FinderTagDescription(tagColor: $0)
+            }
         )
 
-        // codable
-        public var tags: Set<FinderTagDescription> = .init()
+        // codable value
+        public var tags: [FinderTagDescription] = .init()
 
         public var stringValue: String {
             tags.map(\.label)
-                .sorted()
                 .joined(separator: ", ")
         }
 
         public var defaultColor: NSColor? {
-            guard let first = tags.first(where: { tag in
-                tag.tagColor != .none
-            }) else { return nil }
+            guard let color = tags.first(where: { $0.tagColor != .none })?.tagColor else { return nil }
 
-            guard let nsColor = first.tagColor.nsColor else {
+            guard let nsColor = color.nsColor else {
                 return nil
             }
 
@@ -42,17 +37,24 @@
             .map(\.tagColor)
         }
 
+        public func labels() -> [String] {
+            tags.filter {
+                $0.tagColor != .none
+            }
+            .map(\.label)
+        }
+
         public init() {}
 
         public init(url: URL) {
             self = FinderTagGroup(tags: url.finderTags)
         }
 
-        public init(tags: Set<FinderTagDescription>) {
+        public init(tags: [FinderTagDescription]) {
             self.tags = tags
         }
 
-        public mutating func insert(colors: Set<FinderTagDescription>) {
+        public mutating func insert(colors: [FinderTagDescription]) {
             tags = tags.filter { $0.tagColor == .none }
             let colors = colors.filter { $0.tagColor != .none }
 
@@ -67,7 +69,7 @@
 
         public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            tags = try container.decode(Set<FinderTagDescription>.self, forKey: .tags)
+            tags = try container.decode([FinderTagDescription].self, forKey: .tags)
         }
 
         public func encode(to encoder: any Encoder) throws {

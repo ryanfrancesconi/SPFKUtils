@@ -29,8 +29,8 @@
             tagNames.compactMap { TagColor(label: $0) }
         }
 
-        public var finderTags: Set<FinderTagDescription> {
-            var tags = Set<FinderTagDescription>()
+        public var finderTags: [FinderTagDescription] {
+            var tags = [FinderTagDescription]()
 
             for string in tagNames {
                 guard let tagColor = TagColor(label: string) else {
@@ -49,7 +49,7 @@
         }
 
         public func set(tagColors: [TagColor]) throws {
-            let labels: [String] = tagColors.compactMap { $0.dataElement }
+            let labels: [String] = tagColors.compactMap(\.dataElement)
             try set(tagNames: labels)
         }
 
@@ -60,20 +60,24 @@
             }
 
             let data = try tagNames.propertyListData()
-            try setExtendedAttribute(name: Self.userTagsKey, value: data)
+
+            try setExtendedAttributeAndModify(
+                name: Self.userTagsKey,
+                value: data
+            )
         }
 
         public func removeAllTags() throws {
             let empty: [String] = []
 
-            try setExtendedAttribute(
+            try setExtendedAttributeAndModify(
                 name: Self.userTagsKey,
-                value: try empty.propertyListData()
+                value: empty.propertyListData()
             )
         }
     }
 
-    extension Array where Element == URL {
+    extension [URL] {
         public func set(tagNames: [String]) throws {
             for url in self {
                 try url.set(tagNames: tagNames)

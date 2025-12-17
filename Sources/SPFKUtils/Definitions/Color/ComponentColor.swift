@@ -1,6 +1,6 @@
 import Foundation
 
-open class ComponentColor {
+public struct ComponentColor {
     public enum Key: CaseIterable {
         case background
         case text

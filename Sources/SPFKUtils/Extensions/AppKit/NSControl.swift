@@ -7,7 +7,7 @@
         @MainActor
         public func popUpContextMenuBeneath(
             _ menu: NSMenu,
-            with event: NSEvent
+            with event: NSEvent?
         ) {
             let offset: CGFloat = isFlipped ? 5 : -5
 
@@ -15,13 +15,13 @@
             let windowLocation = convert(localLocation, to: nil)
 
             guard let newEvent = NSEvent.mouseEvent(
-                with: event.type,
+                with: event?.type ?? .leftMouseDown,
                 location: windowLocation,
-                modifierFlags: event.modifierFlags,
-                timestamp: event.timestamp,
-                windowNumber: event.windowNumber,
+                modifierFlags: event?.modifierFlags ?? [],
+                timestamp: event?.timestamp ?? 0,
+                windowNumber: event?.windowNumber ??  NSApp.mainWindow?.windowNumber ?? 0,
                 context: nil,
-                eventNumber: event.eventNumber,
+                eventNumber: event?.eventNumber ?? NSApp.currentEvent?.eventNumber ?? 0,
                 clickCount: 1,
                 pressure: 0
             ) else {

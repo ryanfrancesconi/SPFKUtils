@@ -67,6 +67,13 @@
             )
         }
 
+        public func set(finderTags: FinderTagGroup) throws {
+            let colors: [String] = finderTags.tagColors.compactMap(\.dataElement)
+            let textTags: [String] = finderTags.tags.filter { $0.tagColor == .none }.map(\.label)
+
+            try set(tagNames: colors + textTags)
+        }
+
         public func removeAllTags() throws {
             let empty: [String] = []
 

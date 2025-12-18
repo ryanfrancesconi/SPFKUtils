@@ -43,7 +43,6 @@
             let container = try decoder.container(keyedBy: CodingKeys.self)
             url = try container.decode(URL.self, forKey: .url)
             finderTags = try container.decode(FinderTagGroup.self, forKey: .finderTags)
-
             creationDate = try? container.decodeIfPresent(Date.self, forKey: .creationDate)
             modificationDate = try? container.decodeIfPresent(Date.self, forKey: .modificationDate)
             fileSize = try? container.decodeIfPresent(UInt64.self, forKey: .fileSize)

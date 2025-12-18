@@ -30,7 +30,7 @@
             return nsColor
         }
 
-        public func tagColors() -> [TagColor] {
+        public var tagColors: [TagColor] {
             tags.filter {
                 $0.tagColor != .none
             }
@@ -59,6 +59,11 @@
             let colors = colors.filter { $0.tagColor != .none }
 
             tags = tags.union(colors)
+        }
+
+        public mutating func update(colors: [FinderTagDescription]) {
+            tags = tags.filter { $0.tagColor == .none }
+            tags += colors
         }
     }
 

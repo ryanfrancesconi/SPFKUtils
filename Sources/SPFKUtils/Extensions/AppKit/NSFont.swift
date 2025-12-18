@@ -33,7 +33,6 @@
         }
     }
 
-    @MainActor
     extension NSFont {
         public static func systemFont(
             controlSize: NSControl.ControlSize,
@@ -47,7 +46,10 @@
 
             return NSFont(descriptor: descriptor, size: size)
         }
+    }
 
+    @MainActor
+    extension NSFont {
         public static let miniSystemFont = NSFont.systemFont(
             ofSize: NSFont.systemFontSize(for: .mini)
         )

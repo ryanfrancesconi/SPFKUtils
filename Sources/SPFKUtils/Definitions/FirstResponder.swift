@@ -11,6 +11,8 @@
         public enum Action: Equatable, Sendable {
             case orderFrontStandardAboutPanel
             case hide
+            case hideOtherApplications
+            case unhideAllApplications
             case openDocument
             case saveDocument
             case undo
@@ -43,6 +45,10 @@
                 send(selector: #selector(saveDocument(_:)))
             case .hide:
                 send(selector: #selector(hide(_:)))
+            case .hideOtherApplications:
+                send(selector: #selector(hideOtherApplications(_:)))
+            case .unhideAllApplications:
+                send(selector: #selector(unhideAllApplications(_:)))
             case .undo:
                 send(selector: #selector(undo(_:)))
             case .redo:
@@ -101,6 +107,8 @@
 
         @objc fileprivate static func orderFrontStandardAboutPanel(_ sender: Any) {}
         @objc fileprivate static func hide(_ sender: Any) {}
+        @objc fileprivate static func hideOtherApplications(_ sender: Any) {}
+        @objc fileprivate static func unhideAllApplications(_ sender: Any) {}
         @objc fileprivate static func terminate(_ sender: Any) {}
 
         // MARK: - File

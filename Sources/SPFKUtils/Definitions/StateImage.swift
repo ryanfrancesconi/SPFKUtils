@@ -4,6 +4,10 @@ import AppKit
 public struct StateImage {
     public var image: NSImage?
     public var alternateImage: NSImage?
+    
+    public var hasImage: Bool {
+        image != nil || alternateImage != nil
+    }
 
     public subscript(key: NSControl.StateValue) -> NSImage? {
         get {

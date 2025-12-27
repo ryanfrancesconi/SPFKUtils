@@ -91,7 +91,7 @@
                 }
             }
 
-            queue(event: event)
+            await queue(event: event)
         }
     }
 
@@ -113,7 +113,7 @@
             }
         }
 
-        private func queue(event: DirectoryEvent) {
+        private func queue(event: DirectoryEvent) async {
             if !eventQueue.contains(event) {
                 eventQueue.insert(event)
             }
